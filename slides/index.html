@@ -427,6 +427,31 @@
     color: var(--hot);
   }
   .scene { width: 16rem; height: 16rem; }
+  .arena { margin: 0; width: 19rem; }
+  .arena svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 0.55rem;
+  }
+  .arena figcaption {
+    margin: 0.45rem 0 0;
+    font-size: 0.98rem;
+    line-height: 1.3;
+    font-weight: 600;
+    color: var(--hot-deep);
+  }
+  .is-dark .arena figcaption { color: #9fd4ff; }
+  .swatches { display: flex; flex-wrap: wrap; gap: 0.45rem 0.9rem; margin-top: 0.75rem; }
+  .swatch {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--soft);
+  }
+  .swatch i { width: 0.95rem; height: 0.95rem; display: block; flex: none; }
   .ico { width: 1.7rem; height: 1.7rem; display: block; margin-bottom: 0.35rem; color: var(--hot); }
   .ico.light { color: #9fd4ff; }
 
@@ -478,6 +503,7 @@
     margin: 0;
   }
   .fig svg { width: 100%; height: auto; display: block; }
+  .mini { width: 100%; height: 6.4rem; display: block; margin: 0 0 0.45rem; }
   .cap {
     margin: 0.4rem 0 0;
     font-size: 1.05rem;
@@ -933,8 +959,18 @@
       <h1 class="week-title">Uvod, načrt igre<br>in priprava</h1>
       <p class="lede">Danes še ne pišemo celotne igre. Dogovorimo se, kaj gradimo, in zakaj je najprej potreben načrt.</p>
       <div class="chips"><span class="chip">Zagovor 1 zajema vaji 1 in 2</span></div>
-      </div><div class="badge" aria-hidden="true"><svg><use href="#i-book"/></svg></div></div>
-      <aside class="notes">Vprašanje v dvorano: kaj naredi igro igro, ne samo animacijo? Trajanje vsebine 45–60 min, ostanek je vaja.</aside>
+      </div>
+      <figure class="arena">
+        <svg viewBox="0 0 320 180" role="img" aria-label="Temno platno in moder igralec na sredini">
+          <rect width="320" height="180" fill="#1a1d23"/>
+          <rect x="120" y="50" width="80" height="80" rx="4" fill="#3b82f6" stroke="#fbbf24" stroke-width="3"/>
+          <rect x="138" y="68" width="16" height="16" fill="#93c5fd"/>
+          <rect x="166" y="68" width="16" height="16" fill="#93c5fd"/>
+        </svg>
+        <figcaption>Novo: moder igralec v starter/. Ovire, strela in sovražnika še ni.</figcaption>
+      </figure>
+      </div>
+      <aside class="notes">Vprašanje v dvorano: kaj naredi igro igro, ne samo animacijo? Trajanje vsebine 45–60 min, ostanek je vaja. Slika je starter: fillRect, barva #3b82f6.</aside>
     </section>
 
     <section class="slide" id="teden-1-sistem" data-chapter="Teden 1" data-title="Igra kot sistem">
@@ -1002,6 +1038,21 @@
       <aside class="notes">GDD ni roman. Brez načrta tri ure kode pogosto zbrišeš. Naj bo dovolj kratek, da ga v dveh minutah obnoviš.</aside>
     </section>
 
+    <section class="slide is-top" id="teden-1-sklad" data-chapter="Teden 1" data-title="Zakaj platno">
+      <p class="kicker">Teden 1 · teorija</p>
+      <h2>Platno namesto ogrodja</h2>
+      <div class="rows">
+        <div class="row"><span class="tag">Risanje</span><span>HTML5 Canvas 2D. Pravokotnik narišeš sam, z barvo in položajem.</span><span></span></div>
+        <div class="row"><span class="tag">Jezik</span><span>JavaScript brez knjižnic. Vidiš vsako vrstico zanke.</span><span></span></div>
+        <div class="row"><span class="tag">Ogrodje</span><span>Phaser in Three.js ta semester nista orodje vaj.</span><span></span></div>
+      </div>
+      <ul>
+        <li>Ogrodje skrije zanko, trke in vhod. Tu jih moraš razumeti, da jih na zagovoru znaš razložiti.</li>
+        <li>V mapi <strong>starter/</strong> je platno 800 × 450, moder igralec, tipke WASD in čas med sličicami.</li>
+      </ul>
+      <aside class="notes">Kompetenca 3: Canvas je nizka plast pred ogrodjem. Live: python3 -m http.server v starter/, pokaži updatePlayer in loop. Phaserja ne obljubljaj.</aside>
+    </section>
+
     <section class="slide" id="teden-1-vaja" data-chapter="Teden 1" data-title="Vaja 1">
       <p class="kicker">Teden 1 · vaja</p>
       <h2>Začetna igra in osnutek načrta</h2>
@@ -1011,6 +1062,7 @@
         <li>Izpolni osnutek načrta igre: Zombie Survival ali Dungeon Escape.</li>
         <li>Umetna inteligenca sme predlagati mehanike. Razložiš jih z lastnimi besedami.</li>
       </ul>
+      <div class="swatches"><span class="swatch"><i style="background:#3b82f6"></i>igralec</span><span class="swatch"><i style="background:#1a1d23;border:1px solid #8aa"></i>temno platno</span></div>
       <div class="out"><b>Izhod</b><p>Delujoča začetna igra, osnutek načrta in kratek zapis, kaj si spremenil po predlogu.</p></div>
       <aside class="notes">Zagon: python3 -m http.server v starter/. Podrobnosti so v tedni/01/VAJA.md. Domače vprašanje: kje bi živel sovražnik (x, y, w, h)?</aside>
     </section>
@@ -1022,8 +1074,28 @@
       <h1 class="week-title">Premik in<br>repozitorij</h1>
       <p class="lede">Igralec se že premika. Danes naredimo premik predvidljiv, repozitorij pa berljiv.</p>
       <div class="chips"><span class="chip">Zagovor 1 · ta teden zaključi par</span></div>
-      </div><div class="badge" aria-hidden="true"><svg><use href="#i-move"/></svg></div></div>
-      <aside class="notes">Vprašanje: zakaj je diagonala brez normalizacije hitrejša? Odgovor: vektor (1,1) ima dolžino √2.</aside>
+      </div>
+      <figure class="arena">
+        <svg viewBox="0 0 320 180" role="img" aria-label="Igralec s puščicami premika in oznako Shift">
+          <rect width="320" height="180" fill="#1a1d23"/>
+          <rect x="128" y="58" width="64" height="64" rx="4" fill="#3b82f6"/>
+          <rect x="142" y="72" width="12" height="12" fill="#93c5fd"/>
+          <rect x="166" y="72" width="12" height="12" fill="#93c5fd"/>
+          <path d="M160 48 V22" stroke="#fbbf24" stroke-width="4"/>
+          <path d="M160 18 l-8 12 h16 z" fill="#fbbf24"/>
+          <path d="M160 132 V158" stroke="#fbbf24" stroke-width="4"/>
+          <path d="M160 162 l-8 -12 h16 z" fill="#fbbf24"/>
+          <path d="M118 90 H78" stroke="#fbbf24" stroke-width="4"/>
+          <path d="M74 90 l12 -8 v16 z" fill="#fbbf24"/>
+          <path d="M202 90 H242" stroke="#fbbf24" stroke-width="4"/>
+          <path d="M246 90 l-12 -8 v16 z" fill="#fbbf24"/>
+          <rect x="214" y="16" width="90" height="32" rx="4" fill="none" stroke="#fbbf24" stroke-width="3"/>
+          <text x="230" y="38" fill="#fbbf24" font-family="Open Sans, sans-serif" font-size="18" font-weight="700">Shift</text>
+        </svg>
+        <figcaption>Novo: puščice ali pospešek. Koda se razdeli kot v demo/js/. Sovražnika še ne kopiraš.</figcaption>
+      </figure>
+      </div>
+      <aside class="notes">Vprašanje: zakaj je diagonala brez normalizacije hitrejša? Odgovor: vektor (1,1) ima dolžino √2. Datoteke: config, world, input, player, render, game. Ne kopiraj bullets.js in enemies.js.</aside>
     </section>
 
     <section class="slide" id="teden-2-vhod" data-chapter="Teden 2" data-title="Vhod in hitrost">
@@ -1070,6 +1142,24 @@
       <aside class="notes">Na tabli drži W+D. hypot(1,1) je √2. Omejitev na rob platna še ni zid v svetu. Sovražnik: ista polja kot igralec, update za updatePlayer.</aside>
     </section>
 
+    <section class="slide" id="teden-2-hitrost" data-chapter="Teden 2" data-title="Hitrost in rob">
+      <p class="kicker">Teden 2 · teorija</p>
+      <h2>Hitrost je na sekundo, rob ni zid</h2>
+      <pre class="code">x += dx * hitrost * dt
+x ostane med 0 in širino platna</pre>
+      <div class="duo">
+        <div class="panel hot">
+          <b>Zakaj množimo s časom</b>
+          <p>Hitrost je v slikovnih točkah na sekundo. Brez časa med sličicami je igralec hitrejši na zaslonu s več sličicami. Število stoji v konstanti, da se ujema z načrtom igre.</p>
+        </div>
+        <div class="panel warn">
+          <b>Dve različni meji</b>
+          <p>Omejitev na rob ustavi igralca ob okvirju platna. Ovira sredi sveta pride v četrtem tednu in ima zaznavo ter razrešitev. Danes ju ne mešaj.</p>
+        </div>
+      </div>
+      <aside class="notes">PLAYER_SPEED v config.js, v starterju 220. Sprint je večkratnik, npr. 1,6, ne nova formula. Clamp ≠ walls[].</aside>
+    </section>
+
     <section class="slide" id="teden-2-git" data-chapter="Teden 2" data-title="Repo">
       <p class="kicker">Teden 2 · teorija</p>
       <h2 class="wide">Lastna kopija in smiselne potrditve</h2>
@@ -1090,6 +1180,7 @@
         <li>Puščice ali pospešek s tipko Shift. Dodaš eno dodatno vedenje.</li>
         <li>Datoteka README in prve smiselne potrditve sprememb.</li>
       </ul>
+      <div class="chips"><span class="chip">config.js</span><span class="chip">world.js</span><span class="chip">input.js</span><span class="chip">player.js</span><span class="chip">render.js</span><span class="chip">game.js</span></div>
       <div class="out"><b>Izhod · na zagovoru 1 skupaj s tednom 1</b><p>Izboljšan premik v tvoji kopiji, datoteka README in potrditve. Znaš razložiti vhod in hitrost.</p></div>
       <aside class="notes">Zagovor 1: GDD + ta premik. Vprašaj, zakaj listener ne premika igralca sam, in kaj naredi hypot.</aside>
     </section>
@@ -1101,8 +1192,20 @@
       <h1 class="week-title">Zanka,<br>čas, stanja</h1>
       <p class="lede">Na tej zanki stojijo trki, streli, valovi in lastna igra.</p>
       <div class="chips"><span class="chip">Zagovor 2 zajema še vajo 4</span></div>
-      </div><div class="badge" aria-hidden="true"><svg><use href="#i-loop"/></svg></div></div>
-      <aside class="notes">Vprašanje: pri 30 in pri 144 FPS mora biti igralec enako hiter. Kako? Odgovor je čas, ne število frejmov.</aside>
+      </div>
+      <figure class="arena">
+        <svg viewBox="0 0 320 180" role="img" aria-label="Platno z oznako stanja PLAYING">
+          <rect width="320" height="180" fill="#1a1d23"/>
+          <rect x="128" y="62" width="64" height="64" rx="4" fill="#3b82f6"/>
+          <rect x="142" y="76" width="12" height="12" fill="#93c5fd"/>
+          <rect x="166" y="76" width="12" height="12" fill="#93c5fd"/>
+          <rect x="16" y="16" width="132" height="36" rx="4" fill="none" stroke="#fbbf24" stroke-width="3"/>
+          <text x="28" y="41" fill="#fbbf24" font-family="Open Sans, sans-serif" font-size="18" font-weight="700">PLAYING</text>
+        </svg>
+        <figcaption>Novo: stanje igre in čas med sličicami. Na platnu je igralec še vedno sam.</figcaption>
+      </figure>
+      </div>
+      <aside class="notes">Vprašanje: pri 30 in pri 144 FPS mora biti igralec enako hiter. Kako? Odgovor je čas, ne število frejmov. Stanje je niz, ne meni.</aside>
     </section>
 
     <section class="slide" id="teden-3-loop" data-chapter="Teden 3" data-title="Anatomija zanke">
@@ -1149,6 +1252,22 @@ dt = Math.min(dt, 0.05)</pre>
       <aside class="notes">Nariši MENU → PLAYING → GAME_OVER in povratno puščico R. Opcijsko PAUSED na P: isti vzorec, update se preskoči. Debug: ime stanja na platnu.</aside>
     </section>
 
+    <section class="slide" id="teden-3-korak" data-chapter="Teden 3" data-title="Dva časa">
+      <p class="kicker">Teden 3 · teorija</p>
+      <h2>Dva dovoljena časa, ne mešanica</h2>
+      <div class="duo">
+        <div class="panel hot">
+          <b>Čas med sličicami</b>
+          <p>dt je (zdaj minus prej), deljeno s tisoč, da dobiš sekunde. Premik je hitrost krat dt. Zavihek v ozadju zna prinesti več sekund, zato dt omejiš. V starterju je meja 0,05.</p>
+        </div>
+        <div class="panel">
+          <b>Fiksni korak</b>
+          <p>Vedno posodobiš za eno šestdesetinko. Fizika je bolj predvidljiva, kode je malo več. Dovoljeno je, če izbiro zapišeš. Obojega ne mešaj brez komentarja.</p>
+        </div>
+      </div>
+      <aside class="notes">Dogovor predmeta: delta je OK, če jo razumejo. Fiksni korak je plus. Pokaži skok brez omejitve dt: zavihek v ozadje ali CPU throttle.</aside>
+    </section>
+
     <section class="slide" id="teden-3-vaja" data-chapter="Teden 3" data-title="Vaja 3">
       <p class="kicker">Teden 3 · vaja</p>
       <h2>Zanka, ki jo znaš narisati</h2>
@@ -1157,6 +1276,7 @@ dt = Math.min(dt, 0.05)</pre>
         <li>V kodi je stanje, tudi če je še samo PLAYING.</li>
         <li>Ustno razložiš čiščenje platna, posodobitev in risanje.</li>
       </ul>
+      <div class="swatches"><span class="swatch"><i style="background:#fbbf24"></i>stanje PLAYING</span><span class="swatch"><i style="background:#3b82f6"></i>igralec še sam</span></div>
       <div class="out"><b>Izhod</b><p>Urejena igralna zanka, spremenljivka stanja in zapis, ali uporabljaš čas med sličicami ali fiksni korak.</p></div>
       <aside class="notes">To je priprava na entitete. Naslednji teden trki sedijo v update, ne v draw.</aside>
     </section>
@@ -1168,8 +1288,21 @@ dt = Math.min(dt, 0.05)</pre>
       <h1 class="week-title">Trki</h1>
       <p class="lede">Omejitev na rob platna še ni zid v svetu. Danes obravnavamo pravokotnike, ki zasedajo prostor.</p>
       <div class="chips"><span class="chip">Zagovor 2 · ta teden zaključi par</span></div>
-      </div><div class="badge" aria-hidden="true"><svg><use href="#i-hit"/></svg></div></div>
-      <aside class="notes">Vprašanje: ali sta kvadrata v trku, če se samo dotikata po robu? Formula uporablja stroge neenakosti — dotik po robu lahko ostane brez prekrivanja. Naj povejo, katero pravilo so izbrali.</aside>
+      </div>
+      <figure class="arena">
+        <svg viewBox="0 0 320 180" role="img" aria-label="Igralec, siva ovira in mirujoči zeleni sovražnik">
+          <rect width="320" height="180" fill="#1a1d23"/>
+          <rect x="36" y="78" width="120" height="28" rx="2" fill="#5c6370" stroke="#fbbf24" stroke-width="3"/>
+          <rect x="230" y="24" width="28" height="90" rx="2" fill="#5c6370" stroke="#fbbf24" stroke-width="3"/>
+          <rect x="210" y="108" width="52" height="52" rx="3" fill="#4a7c59" stroke="#fbbf24" stroke-width="3"/>
+          <rect x="48" y="112" width="48" height="48" rx="3" fill="#3b82f6"/>
+          <rect x="58" y="124" width="10" height="10" fill="#93c5fd"/>
+          <rect x="76" y="124" width="10" height="10" fill="#93c5fd"/>
+        </svg>
+        <figcaption>Novo: sive ovire in mirujoči sovražnik. Še ne hodi in še ne streljaš. Barve so kot v demo/.</figcaption>
+      </figure>
+      </div>
+      <aside class="notes">Ovire v demu so #5c6370, pešec kasneje #4a7c59. Danes sovražnik samo stoji: x, y, w, h, barva. Vprašanje o dotiku po robu ostane.</aside>
     </section>
 
     <section class="slide" id="teden-4-aabb" data-chapter="Teden 4" data-title="AABB">
@@ -1230,6 +1363,36 @@ a.y &lt; b.y + b.h &amp;&amp; a.y + a.h &gt; b.y</pre>
       <aside class="notes">Na tabli en zid in igralec v desno. Najprej x, ob trku razveljavi samo x, nato y. Ovire so v walls[]. Rob platna lahko ostane omejitev. Ob trku za debug obarvaj oviro.</aside>
     </section>
 
+    <section class="slide" id="teden-4-vrzel" data-chapter="Teden 4" data-title="Ločitvena os">
+      <p class="kicker">Teden 4 · teorija</p>
+      <h2>Ena vrzel pomeni, da trka ni</h2>
+      <div class="duo">
+        <div class="panel">
+          <svg class="mini" viewBox="0 0 280 100" aria-hidden="true">
+            <rect width="280" height="100" fill="#f4f7fb"/>
+            <rect x="16" y="28" width="78" height="44" rx="3" fill="#3d9eff"/>
+            <text x="28" y="55" fill="#fff" font-family="Open Sans, sans-serif" font-size="14" font-weight="700">igralec</text>
+            <rect x="170" y="28" width="78" height="44" rx="3" fill="#d5920a"/>
+            <text x="188" y="55" fill="#07182e" font-family="Open Sans, sans-serif" font-size="14" font-weight="700">ovira</text>
+          </svg>
+          <b>Vrzel po vodoravni osi</b>
+          <p>Pravokotnika sta na isti višini, a se ne dotikata. Ena ločitvena os zadošča, da trka ni.</p>
+        </div>
+        <div class="panel hot">
+          <svg class="mini" viewBox="0 0 280 100" aria-hidden="true">
+            <rect width="280" height="100" fill="#f4f7fb"/>
+            <text x="62" y="22" fill="#08498f" font-family="Open Sans, sans-serif" font-size="14" font-weight="700">igralec</text>
+            <text x="168" y="22" fill="#8a5a00" font-family="Open Sans, sans-serif" font-size="14" font-weight="700">ovira</text>
+            <rect x="48" y="34" width="100" height="48" rx="3" fill="#3d9eff"/>
+            <rect x="118" y="48" width="100" height="48" rx="3" fill="#d5920a" fill-opacity="0.92"/>
+          </svg>
+          <b>Prekrivanje na obeh oseh</b>
+          <p>Šele takrat formula vrne, da se pravokotnika prekrivata. Igralec, ovira, krogla in sovražnik so pravokotniki. Ena funkcija zadošča za semester.</p>
+        </div>
+      </div>
+      <aside class="notes">AABB brez rotacije, levi zgornji kot. Krogi so možni, vaja jih ne zahteva. Dotik po robu: formula uporablja stroge neenakosti, naj povejo, katero pravilo so izbrali.</aside>
+    </section>
+
     <section class="slide" id="teden-4-vaja" data-chapter="Teden 4" data-title="Vaja 4">
       <p class="kicker">Teden 4 · vaja · zagovor 2</p>
       <h2>Ovira in entiteta</h2>
@@ -1238,6 +1401,7 @@ a.y &lt; b.y + b.h &amp;&amp; a.y + a.h &gt; b.y</pre>
         <li>Sovražnik obstaja kot položaj in velikost.</li>
         <li>Ustno poveš razliko med zaznavo in razrešitvijo.</li>
       </ul>
+      <div class="swatches"><span class="swatch"><i style="background:#5c6370"></i>ovira</span><span class="swatch"><i style="background:#4a7c59"></i>mirujoči sovražnik</span><span class="swatch"><i style="background:#3b82f6"></i>igralec</span></div>
       <div class="out"><b>Izhod · na zagovoru 2 skupaj s tednom 3</b><p>Igralec ne gre skozi oviro. Entiteta je v kodi. Znaš razložiti zanko in trk.</p></div>
       <aside class="notes">Zagovor 2: naj pokažejo dt in en trk. Vprašaj, kaj se zgodi na vogalu, če razveljavijo cel premik.</aside>
     </section>
@@ -1249,8 +1413,23 @@ a.y &lt; b.y + b.h &amp;&amp; a.y + a.h &gt; b.y</pre>
       <h1 class="week-title">Strel<br>proti miški</h1>
       <p class="lede">Izstrelek gre proti točki na platnu. Sovražnik začne izgubljati življenje šele v tednu, ko štejemo točke.</p>
       <div class="chips"><span class="chip">Zagovor 3 zajema še vajo 6</span></div>
-      </div><div class="badge" aria-hidden="true"><svg><use href="#i-aim"/></svg></div></div>
-      <aside class="notes">Vprašanje: klik je v oknu ali na platnu? clientX je okno. Canvas ima getBoundingClientRect in lahko CSS skaliranje.</aside>
+      </div>
+      <figure class="arena">
+        <svg viewBox="0 0 320 180" role="img" aria-label="Rumeni izstrelki od igralca proti miški, sovražnik še stoji">
+          <rect width="320" height="180" fill="#1a1d23"/>
+          <rect x="70" y="86" width="100" height="22" fill="#5c6370"/>
+          <rect x="228" y="96" width="48" height="48" rx="3" fill="#4a7c59"/>
+          <rect x="28" y="112" width="48" height="48" rx="3" fill="#3b82f6"/>
+          <rect x="100" y="100" width="16" height="16" fill="#fbbf24"/>
+          <rect x="140" y="78" width="16" height="16" fill="#fbbf24"/>
+          <rect x="180" y="56" width="16" height="16" fill="#fbbf24"/>
+          <circle cx="262" cy="36" r="14" fill="none" stroke="#fbbf24" stroke-width="3"/>
+          <path d="M262 14 v10 M262 48 v10 M240 36 h10 M274 36 h10" stroke="#fbbf24" stroke-width="3"/>
+        </svg>
+        <figcaption>Novo: rumeni izstrelki proti miški. Sovražnik še stoji in še nima škode.</figcaption>
+      </figure>
+      </div>
+      <aside class="notes">V demu je krogla #fbbf24, BULLET_SIZE 8, BULLET_COOLDOWN 0,25 s. Škoda je šele teden 7. clientX je okno.</aside>
     </section>
 
     <section class="slide" id="teden-5-mis" data-chapter="Teden 5" data-title="Koordinate">
@@ -1294,6 +1473,38 @@ vx /= len; vy /= len</pre>
       <aside class="notes">bullets[] = {x,y,w,h,vx,vy}. splice od konca. shotTimer odštevaj z dt. Krogla–zid je ista aabb, ni pa pogoj tedna. Škoda sovražniku je teden 7.</aside>
     </section>
 
+    <section class="slide" id="teden-5-okno" data-chapter="Teden 5" data-title="Okno in platno">
+      <p class="kicker">Teden 5 · teorija</p>
+      <h2>Klik je v oknu, igra je na platnu</h2>
+      <div class="split even">
+        <figure class="fig">
+          <svg viewBox="0 0 420 240" role="img" aria-label="Okno brskalnika in manjše platno, klik se preračuna">
+            <rect width="420" height="240" fill="#f4f7fb"/>
+            <rect x="16" y="16" width="388" height="208" rx="8" fill="none" stroke="#0e2240" stroke-width="3"/>
+            <text x="28" y="40" fill="#5a6e88" font-family="Open Sans, sans-serif" font-size="16" font-weight="700">okno</text>
+            <rect x="70" y="64" width="220" height="124" fill="#1a1d23"/>
+            <text x="82" y="88" fill="#9fd4ff" font-family="Open Sans, sans-serif" font-size="16" font-weight="700">platno</text>
+            <circle cx="300" cy="150" r="8" fill="#d5920a"/>
+            <text x="250" y="196" fill="#d5920a" font-family="Open Sans, sans-serif" font-size="15" font-weight="700">klik v oknu</text>
+            <path d="M292 150 H250" stroke="#0b63c5" stroke-width="3"/>
+            <path d="M250 150 l10 -6 v12 z" fill="#0b63c5"/>
+            <text x="118" y="146" fill="#e8eaed" font-family="Open Sans, sans-serif" font-size="14">točka v igri</text>
+          </svg>
+        </figure>
+        <div class="stack">
+          <div class="panel hot">
+            <b>Preračun</b>
+            <p>Od klika odšteješ rob platna na zaslonu. Nato pomnožiš z razmerjem širine v kodi in širine na zaslonu. Enako za višino.</p>
+          </div>
+          <div class="panel warn">
+            <b>Če tega ni</b>
+            <p>Strel gre mimo, kadar slog platno poveča. Smer računaš od središča igralca, v polje pa shraniš levi zgornji kot.</p>
+          </div>
+        </div>
+      </div>
+      <aside class="notes">clientX je okno. getBoundingClientRect da rob na zaslonu. canvas.width / rect.width popravi CSS skaliranje. Smer od središča, shranjen je levi zgornji kot, da ostane {x,y,w,h}.</aside>
+    </section>
+
     <section class="slide" id="teden-5-vaja" data-chapter="Teden 5" data-title="Vaja 5">
       <p class="kicker">Teden 5 · vaja</p>
       <h2>Krogle, ki letijo</h2>
@@ -1302,6 +1513,7 @@ vx /= len; vy /= len</pre>
         <li>Projektili se premikajo in izginejo ob robu.</li>
         <li>Po želji dodaš premor med streli.</li>
       </ul>
+      <div class="swatches"><span class="swatch"><i style="background:#fbbf24"></i>izstrelek</span><span class="swatch"><i style="background:#4a7c59"></i>sovražnik še stoji</span></div>
       <div class="out"><b>Izhod</b><p>Igrivo streljanje. Smer znaš izračunati iz miške in središča igralca.</p></div>
       <aside class="notes">Škoda sovražniku še ni pogoj. Če kdo to doda, naj ne podre priprave na teden 6.</aside>
     </section>
@@ -1313,8 +1525,22 @@ vx /= len; vy /= len</pre>
       <h1 class="week-title">Zdravje<br>in konec igre</h1>
       <p class="lede">Sklenemo zanko poraza. Valovi in zmaga pridejo naslednji teden.</p>
       <div class="chips"><span class="chip">Zagovor 3 · ta teden zaključi par</span></div>
-      </div><div class="badge" aria-hidden="true"><svg><use href="#i-heart"/></svg></div></div>
-      <aside class="notes">Vprašanje: sovražnik se prekriva eno sekundo pri 60 FPS. Kolikokrat pade HP, če vsak frejm odšteješ 1? Okoli 60. Zato hurt cooldown.</aside>
+      </div>
+      <figure class="arena">
+        <svg viewBox="0 0 320 180" role="img" aria-label="Vrstica zdravja in bled igralec med premorom škode">
+          <rect width="320" height="180" fill="#1a1d23"/>
+          <rect x="12" y="12" width="168" height="44" fill="rgba(0,0,0,0.45)"/>
+          <text x="22" y="40" fill="#e8eaed" font-family="Open Sans, sans-serif" font-size="16" font-weight="700">HP</text>
+          <rect x="58" y="26" width="108" height="16" fill="#2a2e35"/>
+          <rect x="58" y="26" width="64" height="16" fill="#4ade80" stroke="#fbbf24" stroke-width="2"/>
+          <rect x="70" y="86" width="110" height="22" fill="#5c6370"/>
+          <rect x="220" y="96" width="48" height="48" rx="3" fill="#4a7c59"/>
+          <rect x="164" y="100" width="48" height="48" rx="3" fill="#fecaca" stroke="#fbbf24" stroke-width="3"/>
+        </svg>
+        <figcaption>Novo: vrstica zdravja in bleda barva med premorom. Ob nič zdravja napis Konec igre in tipka R.</figcaption>
+      </figure>
+      </div>
+      <aside class="notes">V demu: maxHp 5, HURT_COOLDOWN 0,8 s, barva ob zadetku #fecaca, sicer #3b82f6. Vprašanje o 60 zadetkih na sekundo ostane.</aside>
     </section>
 
     <section class="slide" id="teden-6-hp" data-chapter="Teden 6" data-title="HP in pavza">
@@ -1365,6 +1591,25 @@ if (overlap &amp;&amp; hurtTimer &lt;= 0) {
       <aside class="notes">Če hurtTimer ne odštevaš z dt, premor traja v sličicah in je odvisen od FPS. resetGame() naj bo ena funkcija. Score in val na nič pridejo v tednu 7, a mesto za reset pripravi že zdaj.</aside>
     </section>
 
+    <section class="slide" id="teden-6-odziv" data-chapter="Teden 6" data-title="Odziv in ponastavitev">
+      <p class="kicker">Teden 6 · teorija</p>
+      <h2>Škoda brez odziva ni pravilo</h2>
+      <div class="duo">
+        <div class="panel hot">
+          <b>Kaj igralec vidi</b>
+          <p>Številka ali vrstica zdravja na platnu. Dokler teče premor, je igralec drugačne barve. V demu je takrat svetlo rdeč, sicer moder. Številke v kodi so iste kot v načrtu.</p>
+        </div>
+        <div class="panel">
+          <b>Ena funkcija za začetek znova</b>
+          <p>Na enem mestu vrneš položaj, zdravje, izstrelke, časovnike in stanje PLAYING. Če kaj ostane, je druga igra drugačna od prve. Osvežitev brskalnika ni del igre.</p>
+        </div>
+      </div>
+      <ul>
+        <li>Ko zdravje pade na nič, se posodobitev ustavi. Risanje še napiše, da je konec. Meni ta teden ni obvezen.</li>
+      </ul>
+      <aside class="notes">V demu maxHp 5, hurt barva #fecaca. GAME OVER besedilo na platnu zadošča. Reset pripravi mesto tudi za točke in val, čeprav ju šteješ šele naslednji teden.</aside>
+    </section>
+
     <section class="slide" id="teden-6-vaja" data-chapter="Teden 6" data-title="Vaja 6">
       <p class="kicker">Teden 6 · vaja · zagovor 3</p>
       <h2>Poraz in nov začetek</h2>
@@ -1373,6 +1618,7 @@ if (overlap &amp;&amp; hurtTimer &lt;= 0) {
         <li>Konec igre je besedilo na platnu.</li>
         <li>R začne znova.</li>
       </ul>
+      <div class="swatches"><span class="swatch"><i style="background:#4ade80"></i>zdravje</span><span class="swatch"><i style="background:#fecaca"></i>premor škode</span></div>
       <div class="out"><b>Izhod · na zagovoru 3 skupaj s tednom 5</b><p>Streljanje in zanka poraza. Znaš razložiti vektor in zakaj škoda ne pride v vsaki sličici.</p></div>
       <aside class="notes">Zagovor 3: naj izstrelijo in naj se pustijo zadeti. Vprašaj, kaj se zgodi, če hurtTimer ne odštevaš z dt.</aside>
     </section>
@@ -1384,8 +1630,26 @@ if (overlap &amp;&amp; hurtTimer &lt;= 0) {
       <h1 class="week-title">Točke,<br>valovi, prikaz</h1>
       <p class="lede">Samo hoja še ni preživetje. Napredek je del mehanike.</p>
       <div class="chips"><span class="chip">Zagovor 4 zajema še vajo 8</span></div>
-      </div><div class="badge" aria-hidden="true"><svg><use href="#i-wave"/></svg></div></div>
-      <aside class="notes">Val 2 se začne, ko je arena prazna: enemies.length === 0, nato spawnWave(wave + 1). Več sovražnikov, ista logika.</aside>
+      </div>
+      <figure class="arena">
+        <svg viewBox="0 0 320 180" role="img" aria-label="Prikaz točk in vala, dva mirujoča sovražnika in izstrelek">
+          <rect width="320" height="180" fill="#1a1d23"/>
+          <rect x="10" y="10" width="150" height="72" fill="rgba(0,0,0,0.45)" stroke="#fbbf24" stroke-width="2"/>
+          <text x="20" y="32" fill="#e8eaed" font-family="Open Sans, sans-serif" font-size="14" font-weight="700">HP</text>
+          <rect x="52" y="20" width="96" height="12" fill="#2a2e35"/>
+          <rect x="52" y="20" width="68" height="12" fill="#4ade80"/>
+          <text x="20" y="54" fill="#fbbf24" font-family="Open Sans, sans-serif" font-size="15" font-weight="700">Točke 20</text>
+          <text x="20" y="74" fill="#fbbf24" font-family="Open Sans, sans-serif" font-size="15" font-weight="700">Val 2</text>
+          <rect x="118" y="100" width="70" height="18" fill="#5c6370"/>
+          <rect x="176" y="36" width="44" height="44" rx="3" fill="#4a7c59"/>
+          <rect x="248" y="108" width="44" height="44" rx="3" fill="#4a7c59"/>
+          <rect x="150" y="78" width="14" height="14" fill="#fbbf24"/>
+          <rect x="28" y="118" width="40" height="40" rx="3" fill="#3b82f6"/>
+        </svg>
+        <figcaption>Novo: točke, številka vala in prikaz zgoraj levo. Sovražniki ta teden še smejo stati.</figcaption>
+      </figure>
+      </div>
+      <aside class="notes">HUD v demu: črn pravokotnik, HP vrstica, Točke, Val. Točke pešca so 10, tekača 20, a tekač pride šele v tednu 8.</aside>
     </section>
 
     <section class="slide" id="teden-7-score" data-chapter="Teden 7" data-title="Score in valovi">
@@ -1432,6 +1696,28 @@ if (overlap &amp;&amp; hurtTimer &lt;= 0) {
       <aside class="notes">Referenca: walkerjev 2 + wave. Spawn na fiksnih točkah roba. HUD je canvas fillText, ne knjižnica. Endless ali preživi val N — oboje zapišejo v GDD. Lose že imajo.</aside>
     </section>
 
+    <section class="slide" id="teden-7-tezava" data-chapter="Teden 7" data-title="Težavnost">
+      <p class="kicker">Teden 7 · teorija</p>
+      <h2>Težje pomeni več, ne drugače</h2>
+      <div class="flow">
+        <div class="panel">
+          <b>Prvi val</b>
+          <p>Nekaj sovražnikov na robu. V referenci je pešcev dva plus številka vala. Točko preskočiš, če leži v oviri ali preblizu igralca.</p>
+        </div>
+        <div class="arr" aria-hidden="true">→</div>
+        <div class="panel hot">
+          <b>Naslednji val</b>
+          <p>Ista funkcija, višja številka. Hitrost in drugi tip prideta šele v osmem tednu. Danes smejo sovražniki še stati.</p>
+        </div>
+        <div class="arr" aria-hidden="true">→</div>
+        <div class="panel warn">
+          <b>V načrtu</b>
+          <p>Zapišeš, ali je igra brez konca ali se konča po določenem valu. Poraz že imaš. Ob koncu pokaži končne točke.</p>
+        </div>
+      </div>
+      <aside class="notes">Ne dodajaj seeka, da val »deluje«. Težavnost naj raste počasi. HUD: kontrast, zgoraj, ne čez igralca. To je načrtovanje igre, ne knjižnica za vmesnik.</aside>
+    </section>
+
     <section class="slide" id="teden-7-vaja" data-chapter="Teden 7" data-title="Vaja 7">
       <p class="kicker">Teden 7 · vaja</p>
       <h2>Zanka preživetja</h2>
@@ -1440,6 +1726,7 @@ if (overlap &amp;&amp; hurtTimer &lt;= 0) {
         <li>Vsaj dva vala.</li>
         <li>Na platnu se vidijo točke, val in zdravje.</li>
       </ul>
+      <div class="swatches"><span class="swatch"><i style="background:#4ade80"></i>zdravje</span><span class="swatch"><i style="background:#fbbf24"></i>točke in val</span><span class="swatch"><i style="background:#4a7c59"></i>več sovražnikov</span></div>
       <div class="out"><b>Izhod</b><p>Osnovna zanka preživetja in dopolnjen napredek v načrtu igre.</p></div>
       <aside class="notes">Preveri, da val res napreduje in da HUD ne laže (HP se ujema s podatkom).</aside>
     </section>
@@ -1451,8 +1738,27 @@ if (overlap &amp;&amp; hurtTimer &lt;= 0) {
       <h1 class="week-title">Sovražnik<br>te išče</h1>
       <p class="lede">Skupna osnova se danes zaključi. Naslednji korak je tvoja igra.</p>
       <div class="chips"><span class="chip">Zagovor 4 · ta teden zaključi par</span></div>
-      </div><div class="badge" aria-hidden="true"><svg><use href="#i-seek"/></svg></div></div>
-      <aside class="notes">Kje smo: loop, vhod, ovire, strel, HP, score, valovi. Manjka občutek, da sovražnik hoče do tebe. Vprašanje: razlika med seek in pathfinding.</aside>
+      </div>
+      <figure class="arena">
+        <svg viewBox="0 0 320 180" role="img" aria-label="Zeleni pešec in rdeči tekač z puščicama proti igralcu">
+          <rect width="320" height="180" fill="#1a1d23"/>
+          <rect x="10" y="10" width="168" height="28" fill="rgba(0,0,0,0.45)"/>
+          <text x="18" y="29" fill="#e8eaed" font-family="Open Sans, sans-serif" font-size="14" font-weight="700">HP · Točke · Val</text>
+          <rect x="118" y="78" width="84" height="20" fill="#5c6370"/>
+          <rect x="28" y="108" width="44" height="44" rx="3" fill="#3b82f6"/>
+          <rect x="214" y="28" width="52" height="52" rx="3" fill="#4a7c59" stroke="#fbbf24" stroke-width="3"/>
+          <rect x="214" y="20" width="52" height="6" fill="#111"/>
+          <rect x="214" y="20" width="32" height="6" fill="#86efac"/>
+          <rect x="250" y="122" width="32" height="32" rx="3" fill="#d44545" stroke="#fbbf24" stroke-width="3"/>
+          <path d="M210 54 L80 120" stroke="#fbbf24" stroke-width="3" fill="none"/>
+          <path d="M76 124 l16 -2 l-6 -14 z" fill="#fbbf24"/>
+          <path d="M250 138 L78 140" stroke="#fbbf24" stroke-width="3" fill="none"/>
+          <path d="M74 140 l16 4 l-2 -16 z" fill="#fbbf24"/>
+        </svg>
+        <figcaption>Novo: oba hodita proti igralcu. Pešec je večji in počasnejši, tekač manjši in hitrejši. Kot v demo/.</figcaption>
+      </figure>
+      </div>
+      <aside class="notes">KINDS v demo/js/config.js: walker 32 px, hitrost 55, hp 3, #4a7c59, 10 točk. Runner 20 px, hitrost 150, hp 1, #d44545, 20 točk. Seek, ne pathfinding.</aside>
     </section>
 
     <section class="slide" id="teden-8-seek" data-chapter="Teden 8" data-title="Vektor sledenja">
@@ -1505,6 +1811,21 @@ moveWithWalls(enemy, (dx / len) * speed * dt, …)</pre>
       <aside class="notes">Seek ≠ pathfinding. moveWithWalls, ne goli x +=. KINDS tabela, ne dve kopiji updateEnemy. GDD §6 naj se ujema s številkami. Skupna baza: hoja, strel, ovire, HP, R, točke, val, dva tipa.</aside>
     </section>
 
+    <section class="slide is-top" id="teden-8-baza" data-chapter="Teden 8" data-title="Seznam osnove">
+      <p class="kicker">Teden 8 · teorija</p>
+      <h2>Skupna osnova je seznam</h2>
+      <div class="rows">
+        <div class="row"><span class="tag">Hoja</span><span>WASD ali puščice, diagonala, rob platna</span><span></span></div>
+        <div class="row"><span class="tag">Strel</span><span>Smer proti miški, izstrelek izgine ob robu</span><span></span></div>
+        <div class="row"><span class="tag">Ovire</span><span>Igralec ne gre skozi, razrešitev po oseh</span><span></span></div>
+        <div class="row"><span class="tag">Poraz</span><span>Zdravje, premor škode, konec igre, tipka R</span><span></span></div>
+        <div class="row"><span class="tag">Val</span><span>Točke, prikaz stanja, naslednji val</span><span></span></div>
+        <div class="row"><span class="tag">Tipa</span><span>Pešec in tekač, ista funkcija sledenja</span><span></span></div>
+      </div>
+      <p class="meta">Slika lika in zvok sta del projekta. Naslednji tedni niso več lepotne popravke te iste igre.</p>
+      <aside class="notes">To pokrije kompetence 1–3 in del izgradnje. Asseti so projekt. Ni cilj: delci, dvanajst orožij, Unreal. Po tednu 8 odpri projekt/BRIEF.md.</aside>
+    </section>
+
     <section class="slide" id="teden-8-vaja" data-chapter="Teden 8" data-title="Vaja 8">
       <p class="kicker">Teden 8 · vaja · zagovor 4</p>
       <h2>Skupna osnova je mejnik</h2>
@@ -1513,6 +1834,7 @@ moveWithWalls(enemy, (dx / len) * speed * dt, …)</pre>
         <li>Vsaj dva tipa, ki se razlikujeta po hitrosti, zdravju ali barvi.</li>
         <li>V datoteki README piše, kako igro zaženeš in kako igraš.</li>
       </ul>
+      <div class="swatches"><span class="swatch"><i style="background:#4a7c59"></i>pešec, več zdravja</span><span class="swatch"><i style="background:#d44545"></i>tekač, hitrejši</span></div>
       <div class="out"><b>Izhod · na zagovoru 4 skupaj s tednom 7</b><p>Igriva igra preživetja. Znaš razložiti val in sledenje. Nato se začne projekt.</p></div>
       <aside class="notes">Zagovor 4: score, val, HUD, seek, dva tipa. Vprašaj, kaj je razlika med tipoma v podatkih, ne v dveh kopijah funkcije.</aside>
     </section>
