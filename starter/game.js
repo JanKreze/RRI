@@ -14,6 +14,9 @@
   const ctx = canvas.getContext("2d");
   const W = canvas.width;
   const H = canvas.height;
+  // --- Konstante (lažje uravnavanje in GDD) ---------------------------------
+  const PLAYER_SPEED = 320;      // piksli na sekundo
+  const SPRINT_MULTIPLIER = 1.6; // Shift = 1.6x hitrost
 
   // --- Igralec --------------------------------------------------------------
   // Kasneje: sprite namesto fillRect; hitrost boš uravnaval v vajah.
@@ -22,7 +25,7 @@
     y: H / 2 - 16,
     w: 32,
     h: 32,
-    speed: 320, // piksli na sekundo (delta-time)
+    speed: PLAYER_SPEED, // piksli na sekundo (delta-time)
     color: "#001400", // spremenil sem v zeleno barvo, spremenil sem hitrost
   };
 
@@ -33,6 +36,11 @@
     a: false,
     s: false,
     d: false,
+    arrowup: false,
+    arrowdown: false,
+    arrowleft: false,
+    arrowright: false,
+    shift: false,
   };
 
   window.addEventListener("keydown", (e) => {
@@ -59,22 +67,26 @@
     let dx = 0;
     let dy = 0;
 
-    if (keys.w) dy -= 1;
-    if (keys.s) dy += 1;
-    if (keys.a) dx -= 1;
-    if (keys.d) dx += 1;
+    // WASD ali puščice — oboje daje isti dx/dy
+    if (keys.w || keys.arrowup) dy -= 1;
+    if (keys.s || keys.arrowdown) dy += 1;
+    if (keys.a || keys.arrowleft) dx -= 1;
+    if (keys.d || keys.arrowright) dx += 1;
 
-    // Diagonalno premikanje: normaliziraj, da ni hitrejše
+    // Diagonala: normaliziraj v enotski vektor
     if (dx !== 0 || dy !== 0) {
       const len = Math.hypot(dx, dy);
       dx /= len;
       dy /= len;
     }
 
-    player.x += dx * player.speed * dt;
-    player.y += dy * player.speed * dt;
+    // Sprint: začasno večja hitrost
+    const speed = keys.shift ? player.speed * SPRINT_MULTIPLIER : player.speed;
 
-    // Omejitev na platno (clamp)
+    player.x += dx * speed * dt;
+    player.y += dy * speed * dt;
+
+    // Clamp na rob platna (to še ni trk z ovirami — teden 4)
     player.x = Math.max(0, Math.min(W - player.w, player.x));
     player.y = Math.max(0, Math.min(H - player.h, player.y));
   }
