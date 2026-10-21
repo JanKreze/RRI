@@ -3,15 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>P16 — Starter (Teden 1)</title>
+  <title>P16 — Game (Teden 2)</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main>
     <h1>P16 — Razvoj iger · Game</h1>
-    <p class="hint">Premikanje: <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></p>
+    <p class="hint">
+      Premikanje: <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> ali puščice ·
+      Sprint: <kbd>Shift</kbd> · Debug: <kbd>F3</kbd>
+    </p>
     <canvas id="game" width="800" height="450" aria-label="Igralno polje"></canvas>
   </main>
-  <script src="game.js"></script>
+  <!-- ES moduli: type="module" je obvezen; deluje samo prek strežnika (http.server) -->
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
