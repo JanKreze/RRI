@@ -22,8 +22,8 @@
     y: H / 2 - 16,
     w: 32,
     h: 32,
-    speed: 220, // piksli na sekundo (delta-time)
-    color: "#3b82f6", // modra
+    speed: 320, // piksli na sekundo (delta-time)
+    color: "#001400", // spremenil sem v zeleno barvo, spremenil sem hitrost
   };
 
   // --- Tipkovnica -----------------------------------------------------------
