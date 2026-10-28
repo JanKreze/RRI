@@ -1,0 +1,1 @@
+DT je v sekundah; realni čas od prejšnjega frame-a (pri 60 FPS približno 0,0167), omejen navzgor na `MAX_DT` = 0,05, update se kliče enkrat na frame, po izračunu `dt` in pred `draw`. Znotraj `update` se svet premakne samo, če je `world.state === PLAYING`; `update` se kliče vedno. rAF je na koncu loop-a.
