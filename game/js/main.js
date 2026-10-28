@@ -1,29 +1,29 @@
 /**
- * main.js — vstopna točka: platno, stanje igre in game loop.
- * Kasneje (teden 3+): tukaj posodobiš tudi sovražnike in strele.
+ * main.js — vstopna točka: platno, vhod in game loop.
+ * Stanje in posodobitev sta v world.js, risanje v render.js.
+ *
+ * Uporabljam delta time; max dt = 0.05 s (MAX_DT v config.js).
+ * dt je v sekundah. Prvi frejm in vrnitev iz skritega zavihka bi dala
+ * ogromen dt, zato ga omejimo — igralec tako ne preskoči čez pol mape.
  */
 
-import { CANVAS_ID, MAX_DT, DEBUG_DEFAULT } from "./config.js";
+import { CANVAS_ID, MAX_DT } from "./config.js";
 import { initInput, onKeyPress } from "./input.js";
-import { createPlayer, updatePlayer } from "./player.js";
+import { createWorld, update, togglePause } from "./world.js";
 import { draw } from "./render.js";
 
 // --- Platno ---------------------------------------------------------------
 const canvas = document.getElementById(CANVAS_ID);
 const ctx = canvas.getContext("2d");
-const W = canvas.width;
-const H = canvas.height;
 
-// --- Stanje igre ----------------------------------------------------------
-const state = {
-  player: createPlayer(W, H),
-  debug: DEBUG_DEFAULT,
-};
+// --- Svet -----------------------------------------------------------------
+const world = createWorld(canvas.width, canvas.height);
 
 // --- Vhod -----------------------------------------------------------------
 initInput();
 onKeyPress((key) => {
-  if (key === "f3") state.debug = !state.debug;
+  if (key === "f3") world.debug = !world.debug;
+  if (key === "p") togglePause(world);
 });
 
 // --- Game loop (delta time) -----------------------------------------------
@@ -37,8 +37,8 @@ function loop(timestamp) {
   lastTime = timestamp;
   if (dt > MAX_DT) dt = MAX_DT;
 
-  updatePlayer(state.player, dt, W, H);
-  draw(ctx, state, W, H);
+  update(world, dt);
+  draw(ctx, world, world.W, world.H);
 
   requestAnimationFrame(loop);
 }

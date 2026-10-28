@@ -17,6 +17,7 @@
   // --- Konstante (lažje uravnavanje in GDD) ---------------------------------
   const PLAYER_SPEED = 320;      // piksli na sekundo
   const SPRINT_MULTIPLIER = 1.6; // Shift = 1.6x hitrost
+  // spremenil sem hitrost na 320
 
   // --- Igralec --------------------------------------------------------------
   // Kasneje: sprite namesto fillRect; hitrost boš uravnaval v vajah.
@@ -26,7 +27,8 @@
     w: 32,
     h: 32,
     speed: PLAYER_SPEED, // piksli na sekundo (delta-time)
-    color: "#001400", // spremenil sem v zeleno barvo, spremenil sem hitrost
+    color: "#001400", 
+    // spremenil sem v temno zeleno barvo
   };
 
   // --- Tipkovnica -----------------------------------------------------------

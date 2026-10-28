@@ -11,6 +11,14 @@ export const PLAYER_SPEED = 320; // piksli na sekundo
 export const SPRINT_MULTIPLIER = 1.6; // Shift = 1.6x hitrost
 export const PLAYER_COLOR = "#16a34a";
 
+// Stanja igre (world.state)
+export const STATES = Object.freeze({
+  MENU: "MENU",
+  PAUSED: "PAUSED",
+  PLAYING: "PLAYING",
+  GAME_OVER: "GAME_OVER", // teden 6
+});
+
 // Game loop
 export const MAX_DT = 0.05; // omejitev dt (ob zavihku v ozadju ne "skoči")
 
