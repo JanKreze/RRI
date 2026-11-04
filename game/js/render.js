@@ -2,7 +2,13 @@
  * render.js — vse risanje na platno.
  */
 
-import { BG_COLOR, EYE_COLOR, STATES } from "./config.js";
+import {
+  BG_COLOR,
+  EYE_COLOR,
+  STATES,
+  WALL_COLOR,
+  PLAYER_HIT_COLOR,
+} from "./config.js";
 
 /**
  * Nariše en frejm.
@@ -18,8 +24,21 @@ export function draw(ctx, world, W, H) {
   ctx.fillStyle = BG_COLOR;
   ctx.fillRect(0, 0, W, H);
 
-  // Igralec (v PAUSED se še vedno nariše — zamrznjen svet)
-  ctx.fillStyle = player.color;
+  // Ovire
+  ctx.fillStyle = WALL_COLOR;
+  for (const wall of world.walls) {
+    ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
+  }
+
+  // Sovražniki (vidni vsak frejm, tudi v PAUSED)
+  for (const enemy of world.enemies) {
+    ctx.fillStyle = enemy.color;
+    ctx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);
+  }
+
+  // Igralec (v PAUSED se še vedno nariše — zamrznjen svet);
+  // rdeč, dokler se dotika sovražnika
+  ctx.fillStyle = player.touchingEnemy ? PLAYER_HIT_COLOR : player.color;
   ctx.fillRect(player.x, player.y, player.w, player.h);
 
   // Majhen "obraz" — vizualni hint

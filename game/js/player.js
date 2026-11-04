@@ -10,6 +10,7 @@ import {
   PLAYER_COLOR,
 } from "./config.js";
 import { keys } from "./input.js";
+import { moveWithWalls } from "./collision.js";
 
 /**
  * Ustvari igralca na sredini platna.
@@ -39,8 +40,9 @@ function clamp(value, min, max) {
  * @param {number} dt — čas od zadnjega frejma v sekundah
  * @param {number} W — širina platna
  * @param {number} H — višina platna
+ * @param {Array} solids — trdni objekti { x, y, w, h } (ovire, sovražniki)
  */
-export function updatePlayer(player, dt, W, H) {
+export function updatePlayer(player, dt, W, H, solids) {
   let dx = 0;
   let dy = 0;
 
@@ -60,10 +62,10 @@ export function updatePlayer(player, dt, W, H) {
   // Sprint: začasno večja hitrost (player.speed ostane nespremenjen)
   const speed = keys.shift ? player.speed * SPRINT_MULTIPLIER : player.speed;
 
-  player.x += dx * speed * dt;
-  player.y += dy * speed * dt;
+  // Premik gre skozi trde objekte: po oseh ločeno, zato igralec drsi ob njih
+  moveWithWalls(player, dx * speed * dt, dy * speed * dt, solids);
 
-  // Clamp na rob platna (to še NI trk z ovirami — teden 4)
+  // Clamp na rob platna (meje sveta — to NI isto kot walls)
   player.x = clamp(player.x, 0, W - player.w);
   player.y = clamp(player.y, 0, H - player.h);
 }

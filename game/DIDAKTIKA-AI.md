@@ -1,110 +1,147 @@
-# Teden 3 — AI prompti in refleksija
+# Teden 4 — AI prompti in refleksija
 
 
-## Prompt A — delta time vs. fiksni korak
+# P16 — Zombie survival (brskalniška igra)
 
-**Delta time:** vsak frame izmerim realni čas od prejšnjega frame-a (`dt`) in z njim pomnožim premik (`x += speed * dt`).
+Majhna igra v HTML Canvas + vanilla JS, brez knjižnic. Del predmeta Razvoj iger.
 
-- *Prednost:* preprosto; hitrost v pikslih na sekundo je enaka pri 30, 60 ali 144 FPS.
-- *Past:* `dt` niha in je lahko ogromen (zavihek v ozadju, lag), zato predmeti skočijo ali gredo skozi stene; fizika ni povsem deterministična.
-- *Kdaj izbrati:* pri preprostih igrah brez natančne fizike in brez ponovitev (replay).
+## Kako zagnati
 
-**Fiksni korak:** logika vedno napreduje v enakih rezinah (npr. 1/60 s). Preostali realni čas se zbira v akumulatorju, `update` pa se požene tolikokrat, kolikor rezin gre vanj.
+Igra uporablja ES module, zato jo odpri prek lokalnega strežnika (ne z dvoklikom na `index.html`):
 
-- *Prednost:* deterministično in stabilno; trki in fizika se enako obnašajo na vsakem računalniku.
-- *Past:* več kode, po dolgem premoru se lahko `update` požene večkrat naenkrat ("spiral of death"), če števila ne omejiš.
-- *Kdaj izbrati:* pri natančni fiziki, trkih, ki ne smejo "tunelirati", ali pri ponovitvah.
+```powershell
+cd game
+py -m http.server 8080
+```
 
-**Minimalen vzorec z `lastTime` in clamp `dt`:**
+Nato odpri <http://localhost:8080>.
 
+> Če se po spremembi kode nič ne spremeni, je v predpomnilniku stara različica.
+> Odpri DevTools (F12) → Network → obkljukaj **Disable cache** in osveži s **Ctrl+Shift+R**.
+
+## Kontrole
+
+| Tipka | Akcija |
+|-------|--------|
+| `W` `A` `S` `D` ali puščice | Premik |
+| `Shift` (držati) | Sprint (1,6× hitrost) |
+| `P` | Pavza (PLAYING ↔ PAUSED) |
+| `F3` | Prikaži/skrij debug (pozicija igralca) |
+
+## Struktura projekta
+
+```
+game/
+├── index.html      # stran + <canvas>
+├── style.css       # izgled
+├── README.md
+└── js/
+    ├── config.js   # konstante (hitrost, barve, ...)
+    ├── input.js    # stanje tipkovnice (listenerji samo beležijo)
+    ├── world.js    # world.state, world.walls, world.enemies + update(world, dt)
+    ├── collision.js # aabbOverlap, hitsWall, moveWithWalls
+    ├── enemies.js  # createEnemy (entiteta brez AI)
+    ├── player.js   # podatki o igralcu + updatePlayer(dt)
+    ├── render.js   # risanje
+    └── main.js     # vstopna točka + game loop
+```
+
+## Teden 4 — ovire, AABB, entiteta sovražnika
+
+- **`aabbOverlap(a, b)`** zazna prekrivanje dveh pravokotnikov (detect); **`moveWithWalls`** premakne po oseh ločeno in razveljavi os, ki zadene zid (resolve), zato igralec drsi ob zidu.
+- **Ovire** so tabela `WALLS` v `config.js`; clamp na rob platna ostane posebej (meje sveta).
+- **Sovražnik** je entiteta `{ x, y, w, h, color }` v `world.enemies` (brez AI, stoji na fiksni točki). Ob dotiku se igralec za frejm obarva rdeče (samo feedback; HP pride v tednu 6).
+
+
+## Testni list (korak 4)
+ 
+Testirano v brskalniku (igralec s sprintom in največjim `dt`, nato še ročno):
+ 
+- [x] Skozi oviro **ne** grem (z leve, desne, zgoraj, spodaj).
+- [x] Diagonala v vogal ovire ne uide "skozi špranjo" (vsi štirje vogali bloka pri `dt` = 0,05; igralec zdrsne mimo).
+- [x] Sovražnik je viden vsak frejm (tudi v `PAUSED`).
+- [x] `state !== PLAYING` → se ne premikam (v `PAUSED` igralec ne gre skozi zid, ker se sploh ne premika).
+- [x] Sovražnik je trden: igralec ne more "čez" njega.
+---
+ 
+
+## Prompt A — overlap + resolve
+ 
+**Detect (zaznava):** `aabbOverlap` ugotovi, ali se dva pravokotnika prekrivata. Prekrivanje je takrat, ko se prekrivata na obeh oseh hkrati.
+ 
 ```javascript
-let lastTime = 0;
-
-function loop(timestamp) {
-  // Prvi frame: lastTime še ni nastavljen, da dt ni prevelik
-  if (!lastTime) lastTime = timestamp;
-
-  let dt = (timestamp - lastTime) / 1000; // ms -> sekunde
-  lastTime = timestamp;
-
-  // Zgornja meja: ob vrnitvi iz ozadja dt ne sme biti ogromen
-  if (dt > 0.05) dt = 0.05;
-
-  update(dt);
-  draw();
-  requestAnimationFrame(loop);
+// Dva pravokotnika (levi zgornji kot) se prekrivata, ko se prekrivata na OBEH oseh
+export function aabbOverlap(a, b) {
+  return (
+    a.x < b.x + b.w && // levi rob a je levo od desnega roba b
+    a.x + a.w > b.x && // desni rob a je desno od levega roba b
+    a.y < b.y + b.h && // zgornji rob a je nad spodnjim robom b
+    a.y + a.h > b.y // spodnji rob a je pod zgornjim robom b
+  );
 }
-requestAnimationFrame(loop);
 ```
-
-**AI-jevo vprašanje: kaj narediš z `dt`, ko je zavihek v ozadju?**
-Brskalnik v ozadju ustavi `requestAnimationFrame`, zato ima prvi frame po vrnitvi ogromen razmik. `dt` je omejen (`MAX_DT = 0.05`); alternativa bi bila, da se ta frame preskoči.
-
-**Primerjava z mojim loopom:** vzorec je enak, zato ničesar ne zamenjam. Uporabljam delta time.
-
----
-
-## Prompt B — razlaga mojega loopa
-
+ 
+**Resolve (reševanje):** `moveWithWalls` premakne entiteto po oseh ločeno in razveljavi tisto os, ki bi vodila v oviro.
+ 
 ```javascript
-let lastTime = 0;                          // čas prejšnjega frame-a; 0 = še ni bil nastavljen
-function loop(timestamp) {                 // rAF poda timestamp v ms
-  if (!lastTime) lastTime = timestamp;     // 1. frame: dt bo 0, ne ogromen
-  let dt = (timestamp - lastTime) / 1000;  // razlika v ms -> sekunde
-  lastTime = timestamp;                    // zapomni si za naslednji frame
-  if (dt > MAX_DT) dt = MAX_DT;            // zgornja meja 0.05 s
-  update(world, dt);                       // logika sveta
-  draw(ctx, world, world.W, world.H);      // risanje
-  requestAnimationFrame(loop);             // zahteva naslednji frame
+export function moveWithWalls(entity, dx, dy, walls) {
+  // 1. os x: premakni, če zadene zid, vrni na prejšnji x
+  const prevX = entity.x;
+  entity.x += dx;
+  if (hitsWall(entity, walls)) entity.x = prevX;
+ 
+  // 2. os y: enako (x je že dokončen)
+  const prevY = entity.y;
+  entity.y += dy;
+  if (hitsWall(entity, walls)) entity.y = prevY;
 }
-requestAnimationFrame(loop);               // zažene zanko
 ```
+ 
+(`hitsWall` samo pregleda tabelo ovir in kliče `aabbOverlap`.)
+ 
+**AI-jevo vprašanje: zakaj ločimo detect in resolve?**
+Detect samo odgovori z da/ne, resolve pa odloči, kaj narediti. Isto zaznavo lahko uporabimo za različne odzive: pri zidu razveljavimo premik, pri sovražniku bo kasneje poškodba, pri predmetu pobiranje. Z ločitvijo je vsak del tudi lažje testirati.
+ 
+**Moj test:** spremenil sem velikost in lego ovir v `WALLS` (`config.js`) in preveril vogale; igralec ne gre skozi in ob zidu drsi.
+ 
+---
+ 
+## Prompt B — preveri moj trk
+ 
+AI-jeva ugotovitev za `aabbOverlap`:
+ 
+- Pravilen je za konvencijo **levi zgornji kot** (`x, y` je zgornji levi rob, `w, h` velikost), kar je tudi moj dogovor.
+- Ni napake za ena (off-by-one): ker so primerjave stroge (`<` in `>`), se pravokotnika, ki se samo dotikata po robu, **ne** štejeta za prekrivajoča. Tako igralec lahko stoji tik ob zidu.
+- Pri center-based koordinatah bi bile primerjave drugačne; tukaj to ni relevantno.
+Opažanje pri resolve: ker `moveWithWalls` razveljavi **cel korak**, igralec obstane do ene dolžine koraka od zidu (približno 5 px pri običajni hitrosti, približno 8 px s sprintom), ne točno ob robu. Za igro je to sprejemljivo; popravek bi bil poravnava (snap) na rob ovire.
 
-1. **V čem je `dt`:** v sekundah; realni čas od prejšnjega frame-a (pri 60 FPS približno 0,0167), omejen navzgor na `MAX_DT` = 0,05.
-2. **Kdaj se kliče `update`:** enkrat na frame, po izračunu `dt` in pred `draw`. Znotraj `update` se svet premakne samo, če je `world.state === PLAYING`; `update` se kliče vedno.
-3. **Zakaj je rAF na koncu:** naroči naslednji frame in tako vzdržuje zanko; zadnji klic zunaj funkcije zanko zažene.
-
-**"Tega ni v tem izseku":** vrednost `MAX_DT`, vsebina `update` in `draw`, obdelava tipkovnice (zanka ne bere vhoda).
-
-**Opažanja (zadetki in pasti):**
-- Ker je `requestAnimationFrame` na koncu, izjema v `update` ali `draw` trajno ustavi zanko.
-- `!lastTime` bi se sprožil tudi pri `timestamp === 0`, kar se v praksi ne zgodi.
+Dogovor x, y je razumel.
 
 ---
-
-## Prompt C — stanja (skica)
-
+ 
+## Prompt C — krogi (opcijsko)
+ 
 ```javascript
-// config.js — dovoljena stanja (ena spremenljivka: world.state)
-export const STATES = Object.freeze({ MENU: "MENU", PAUSED: "PAUSED", PLAYING: "PLAYING", GAME_OVER: "GAME_OVER" });
-
-// update: premik samo v PLAYING; v drugih stanjih svet miruje
-if (world.state !== STATES.PLAYING) return;
-
-// draw: svet se riše vedno (zamrznjen v PAUSED), napis le v PAUSED
-if (state === STATES.PAUSED) drawPause(ctx, W, H);
+// Dva kroga se prekrivata, ko je razdalja med središčema manjša od vsote polmerov.
+// Primerjamo kvadrate, da nam ni treba računati korena.
+function circlesOverlap(a, b) {
+  const dx = a.cx - b.cx;
+  const dy = a.cy - b.cy;
+  const r = a.r + b.r;
+  return dx * dx + dy * dy < r * r;
+}
 ```
-
-Danes uporabljam `PLAYING` in `PAUSED` (tipka P). `MENU` in `GAME_OVER` obstajata samo kot imeni v `config.js`; logika pride v tednu 6 (takrat po potrebi `switch (world.state)`).
-
----
-
-## Prompt D — "popravi moj dt"
-
-Pri meni igralec ob vrnitvi na zavihek ne skoči, ker `if (dt > MAX_DT) dt = MAX_DT` že je najmanjši popravek; brez te vrstice bi bil `dt` po 10 s v ozadju približno 10 s. Za vajo: `MAX_DT` ročno nastavim na 1, opazujem skok in ga vrnem na 0,05.
-
----
+ 
+- **Raje krog:** pri krogličnih predmetih (krogle, okrogli sovražniki), kjer ne želimo, da se vogali "zatikajo", in pri hitrih projektilih.
+- **Raje AABB:** pri zidovih in p
 
 ## Refleksija
-
-1. **Delta ali fiksni korak? Zakaj?**
-   Uporabljam delta time, ker je igra preprosta, nima natančne fizike, hitrost v pikslih na sekundo pa je enaka na vsakem računalniku. Fiksni korak bi dodal nepotrebno kodo.
-
-2. **Kaj je AI narobe rekel o mojem `loop`?**
-   Ni posebej omenil napak, dal mi je rešitev in razlago, zakaj rešitev deluje. Napake v originalnem loop-u so bile neomenjena točka.
-
-3. **Kaj se zgodi, če je `dt` 2 sekundi — pred in po popravku?**
-   Pred popravkom: igralec se v enem frame-u premakne za 320 × 2 = 640 px (s sprintom 1024 px), torej čez skoraj celo platno; `clamp` ga ustavi na robu. Po popravku je `dt` omejen na 0,05 s, torej samo 16 px na frame.
-
-4. **Česa `draw()` ne sme delati?**
-   `draw()` ne sme spreminjati stanja sveta (premikati igralca, spreminjati `world.state`, brati tipk za logiko), ker je njegova naloga samo risanje; logika sodi v `update`.
+ 
+1. **Z lastnimi besedami: kaj je detect, kaj resolve?**
+   Detect samo ugotovi, ali se dva predmeta prekrivata (da ali ne). Resolve pa odloči, kaj se zgodi zaradi tega: pri zidu premik razveljavim po tisti osi, ki je zadela. Ločena sta, ker isto zaznavo uporabim za več odzivov (zid, sovražnik, predmet). Resolve po oseh posebej omogoča tudi drsenje ob zidu.
+2. **Ali moj igralec "lepi" na vogalu? Kaj sem poskusil?**
+   Ne, ob vogalu zdrsne mimo, ker x in y razrešim ločeno: če je blokirana ena os, se druga še vedno premakne. Preizkusil sem vse štiri vogale bloka pri največjem `dt` in s sprintom. Opažam samo majhno režo (do enega koraka) med igralcem in zidom.
+3. **Kje živi dummy sovražnik in zakaj nima `updateEnemy` še seek?**
+   Sovražnik je ustvarjen v `js/enemies.js` (`createEnemy`) in shranjen v `world.enemies` v `js/world.js`; narisan je v `js/render.js`. Je enak oblikovni vzorec kot igralec (`x, y, w, h, color`), vendar stoji na fiksni točki. Seek (`updateEnemy`) pride šele v tednu 8; danes je cilj samo pripravljena entiteta, na katero bom lahko dodal HP, premikanje in valove.
+4. **Ena stvar, ki jo je AI narobe predlagal.**
+   Ni naredil napačnih predlogov, vendar pa je sovražnika ustvaril brez kolizije.

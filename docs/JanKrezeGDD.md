@@ -53,8 +53,8 @@ Za vsako mehaniko: **vhod → pravilo → feedback**.
 
 | Tip | Vedenje | HP | Hitrost | Nagrada (score) |
 |-----|---------|----|--------|-----------------|
-| walker | sledi | | | |
-| runner | sledi hitro | | | |
+| walker | sledi | *?* | *?* | *?* |
+| runner | sledi hitro | *?* | *?* | *?* |
 | *(opcijsko)* | | | | |
 
 Za **Dungeon Escape**: namesto valov opiši sobe, ključe, izhod.
@@ -74,7 +74,7 @@ Za **Dungeon Escape**: namesto valov opiši sobe, ključe, izhod.
 ## 9. UI / HUD
 
 - Med igro (HP, score, val …): *nenarejen*
-- Meni / game over: *nenarejen*
+- Meni / game over: *pause obstaja, game over še ne*
 - Dostopnost (kontrast, velikost besedila): *nenarejen*
 
 ## 10. Asseti
@@ -104,8 +104,8 @@ Po tednu 8: lastna igra, ne dodatni tedni polisha skupne baze kot glavni cilj. G
 
 ## 13. Tveganja in plan B
 
-- Kaj lahko odpade, če zmanjka časa: *???*
-- Minimalni igrivi rez (MVP): *nenarejen*
+- Kaj lahko odpade, če zmanjka časa: *več player orožij*
+- Minimalni igrivi rez (MVP): *še ni narejen*
 
 ## 14. Dnevnik sprememb GDD
 
@@ -114,7 +114,7 @@ Po tednu 8: lastna igra, ne dodatni tedni polisha skupne baze kot glavni cilj. G
 | 14.10.2026 | Prva verzija |
 | 21.10.2026 | Game + js mapa |
 | 28.10.2026 | Časovne mehanike |
-
+| 4.11.2026 | Ovire, entiteta sovražnik |
 ---
 
 *Oddaja: ta GDD + povezava do repozitorija. Posodobi pred demom lastne igre (`projekt/`).*
