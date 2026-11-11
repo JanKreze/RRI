@@ -17,16 +17,16 @@
 
 ## Korak 0 (~10 min)
 
-- [ ] Igralec, ovire, dummy sovražnik še delujejo.
-- [ ] Veš, kje je `update` (`js/game.js`) in `draw` (`js/render.js`).
+- [x] Igralec, ovire, dummy sovražnik še delujejo.
+- [x] Veš, kje je `update` (`js/game.js`) in `draw` (`js/render.js`).
 
 ---
 
 ## Korak 1 — Miška v prostoru igre (~30–40 min)
 
-- [ ] `world.mouse = { x, y, down: false }` v `js/world.js`. Poslušalci ostanejo v `js/input.js`.
-- [ ] `mousemove`, `mousedown` na `canvas`, `mouseup` na `window`.
-- [ ] Pretvorba v funkciji `mouseOnCanvas`: `getBoundingClientRect` + razmerje `canvas.width / rect.width`.
+- [x] `world.mouse = { x, y, down: false }` v `js/world.js`. Poslušalci ostanejo v `js/input.js`.
+- [x] `mousemove`, `mousedown` na `canvas`, `mouseup` na `window`.
+- [x] Pretvorba v funkciji `mouseOnCanvas`: `getBoundingClientRect` + razmerje `canvas.width / rect.width`.
 
 Test: nariši majhen kvadrat na `mouse.x/y`. Mora sovpadati s kazalcem **na platnu**.
 
@@ -36,32 +36,32 @@ Test: nariši majhen kvadrat na `mouse.x/y`. Mora sovpadati s kazalcem **na plat
 
 Ob kliku (ali ob `mouse.down` + cooldown):
 
-- [ ] Izračunaj enotski vektor od **središča igralca** do miške.
-- [ ] `bullets.push({ x, y, w, h, vx, vy })`. `x, y` sta levi-zgornji kot, kot pri igralcu. `vx, vy` sta enotski vektor.
-- [ ] Konstanta `BULLET_SPEED` (px/s). Smer računaj od **središča** igralca, nato kvadratek postavi okoli te točke.
+- [x] Izračunaj enotski vektor od **središča igralca** do miške.
+- [x] `bullets.push({ x, y, w, h, vx, vy })`. `x, y` sta levi-zgornji kot, kot pri igralcu. `vx, vy` sta enotski vektor.
+- [x] Konstanta `BULLET_SPEED` (px/s). Smer računaj od **središča** igralca, nato kvadratek postavi okoli te točke.
 
 Če je razdalja do miške skoraj 0: ne spawnaj.
 
-- [ ] `shotTimer`: po strelu ga nastavi (npr. 0.25 s) in vsak frejm zmanjšaj z `dt`. Strel samo, ko je `<= 0`.
+- [x] `shotTimer`: po strelu ga nastavi (npr. 0.25 s) in vsak frejm zmanjšaj z `dt`. Strel samo, ko je `<= 0`.
 
 ---
 
 ## Korak 3 — Update in despawn (~30–40 min)
 
-- [ ] V `updateBullets`: `x += vx * BULLET_SPEED * dt` (isto za `y`).
-- [ ] Odstrani, če je izven platna. Zanka **od konca**, da `splice` ne preskoči naslednje krogle.
-- [ ] V `draw`: `fillRect`, isti kvadratek kot ostale entitete.
+- [x] V `updateBullets`: `x += vx * BULLET_SPEED * dt` (isto za `y`).
+- [x] Odstrani, če je izven platna. Zanka **od konca**, da `splice` ne preskoči naslednje krogle.
+- [x] V `draw`: `fillRect`, isti kvadratek kot ostale entitete.
 
 Pazljivo na spreminjanje polja med `for` — raje zanka nazaj ali nov seznam.
 
-- [ ] 10 krogle leti hkrati brez “zmrzovanja” (če zmrzne, imaš neskončen spawn — cooldown).
+- [x] 10 krogle leti hkrati brez “zmrzovanja” (če zmrzne, imaš neskončen spawn — cooldown).
 
 ---
 
 ## Korak 4 — Ovire in dummy (opcijsko, a koristno) (~20–30 min)
 
-- [ ] (Opcijsko) krogla izgine ob `aabbOverlap` z `walls` — isti test kot pri igralcu.
-- [ ] (Opcijsko) ob trku z dummy enemy spremeni barvo sovražnika — **kill/score ni obvezen danes** (teden 7).
+- [x] (Opcijsko) krogla izgine ob `aabbOverlap` z `walls` — isti test kot pri igralcu.
+- [x] (Opcijsko) ob trku z dummy enemy spremeni barvo sovražnika — **kill/score ni obvezen danes** (teden 7).
 
 ---
 
@@ -69,15 +69,15 @@ Pazljivo na spreminjanje polja med `for` — raje zanka nazaj ali nov seznam.
 
 Prompt A: spawn + update, samo ta kos.
 
-- [ ] Spremeni **hitrost ali cooldown ali velikost** krogle in zapiši občutek.
-- [ ] README: kontrole (miška).
+- [x] Spremeni **hitrost ali cooldown ali velikost** krogle in zapiši občutek.
+- [x] README: kontrole (miška).
 
 ---
 
 ## Korak 6 — Zapri (~15 min)
 
-- [ ] Commit: `teden 5: strel proti miški + cooldown`.
-- [ ] GDD: vrstica streljanja (vhod / pravilo / feedback).
+- [x] Commit: `teden 5: strel proti miški + cooldown`.
+- [x] GDD: vrstica streljanja (vhod / pravilo / feedback).
 
 ### Priprava na teden 6
 

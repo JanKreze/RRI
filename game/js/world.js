@@ -10,9 +10,11 @@ import {
   WALLS,
   ENEMY_START,
   CONTACT_MARGIN,
+  SHOT_COOLDOWN,
 } from "./config.js";
 import { createPlayer, updatePlayer } from "./player.js";
 import { createEnemy } from "./enemies.js";
+import { createBullet, updateBullets } from "./bullets.js";
 import { aabbOverlap } from "./collision.js";
 
 /**
@@ -29,6 +31,9 @@ export function createWorld(W, H) {
     player: createPlayer(W, H),
     walls: WALLS,
     enemies: [createEnemy(ENEMY_START.x, ENEMY_START.y)],
+    mouse: { x: 0, y: 0, down: false }, // koordinate platna; listenerji v input.js
+    bullets: [],
+    shotTimer: 0, // sekunde do naslednjega dovoljenega strela
   };
 }
 
@@ -60,5 +65,27 @@ export function update(world, dt) {
       h: e.h + 2 * CONTACT_MARGIN,
     })
   );
-  // Kasneje (teden 8): updateEnemy za vsakega sovražnika; strele.
+  // Krogle: premik + izginotje (zunaj platna, zid, sovražnik)
+  world.bullets = updateBullets(
+    world.bullets,
+    dt,
+    world.W,
+    world.H,
+    world.walls,
+    world.enemies
+  );
+
+  // Zatrepetanje sovražnika po zadetku usahne
+  for (const e of world.enemies) e.flash = Math.max(0, e.flash - dt);
+
+  // Strel: časovnik teče z dt; strelja samo, ko je <= 0 in je miška pritisnjena
+  world.shotTimer = Math.max(0, world.shotTimer - dt);
+  if (world.mouse.down && world.shotTimer <= 0) {
+    const bullet = createBullet(world.player, world.mouse);
+    if (bullet) {
+      world.bullets.push(bullet);
+      world.shotTimer = SHOT_COOLDOWN;
+    }
+  }
+  // Kasneje (teden 8): updateEnemy za vsakega sovražnika.
 }

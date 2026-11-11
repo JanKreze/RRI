@@ -1,7 +1,7 @@
 /**
- * input.js — tipkovnica.
- * Pravilo: listenerji samo ZABELEŽIJO stanje tipk.
- * Premik živi v player.js (updatePlayer).
+ * input.js — tipkovnica in miška.
+ * Pravilo: listenerji samo ZABELEŽIJO stanje (keys, world.mouse).
+ * Premik živi v player.js (updatePlayer), strel v world.js (update).
  */
 
 // true = tipka je trenutno pritisnjena (imena so male črke)
@@ -31,7 +31,44 @@ export function onKeyPress(callback) {
   pressListeners.push(callback);
 }
 
-export function initInput() {
+/**
+ * Pretvori položaj miške iz okna v koordinate platna (800x450 ...), tudi če je
+ * platno v CSS-u povečano/pomanjšano. clientLeft/clientTop/clientWidth ne
+ * vključujejo obrobe (border), zato so koordinate natančne.
+ * @param {MouseEvent} e
+ * @param {HTMLCanvasElement} canvas
+ */
+export function mouseOnCanvas(e, canvas) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / canvas.clientWidth;
+  const scaleY = canvas.height / canvas.clientHeight;
+  return {
+    x: (e.clientX - rect.left - canvas.clientLeft) * scaleX,
+    y: (e.clientY - rect.top - canvas.clientTop) * scaleY,
+  };
+}
+
+/**
+ * @param {HTMLCanvasElement} canvas
+ * @param {{x:number, y:number, down:boolean}} mouse — world.mouse (listenerji ga samo zapisujejo)
+ */
+export function initInput(canvas, mouse) {
+  canvas.addEventListener("mousemove", (e) => {
+    Object.assign(mouse, mouseOnCanvas(e, canvas));
+  });
+
+  canvas.addEventListener("mousedown", (e) => {
+    if (e.button !== 0) return; // samo leva tipka
+    Object.assign(mouse, mouseOnCanvas(e, canvas));
+    mouse.down = true;
+    e.preventDefault(); // brez izbiranja besedila ob vlečenju
+  });
+
+  // mouseup na window: igralec lahko spusti tipko tudi zunaj platna
+  window.addEventListener("mouseup", (e) => {
+    if (e.button === 0) mouse.down = false;
+  });
+
   window.addEventListener("keydown", (e) => {
     const k = e.key.toLowerCase();
     if (k in keys) {
@@ -51,5 +88,6 @@ export function initInput() {
   // Če igralec zamenja okno med držanjem tipke, keyup ne pride — ponastavi vse
   window.addEventListener("blur", () => {
     for (const k in keys) keys[k] = false;
+    mouse.down = false;
   });
 }

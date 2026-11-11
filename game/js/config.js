@@ -15,10 +15,21 @@ export const PLAYER_COLOR = "#16a34a";
 export const ENEMY_SIZE = 32;
 export const ENEMY_COLOR = "#a3e635"; // limetno zelena, da se loči od igralca
 export const ENEMY_START = { x: 640, y: 340 }; // fiksna točka, stran od ovir
+export const ENEMY_HIT_COLOR = "#f97316"; // sovražnik zatrepeta ob zadetku
+export const ENEMY_HIT_FLASH = 0.15; // s
 export const PLAYER_HIT_COLOR = "#ef4444"; // igralec se obarva ob dotiku sovražnika
 // px: "dotik" = igralec je tik ob sovražniku. Ker resolve razveljavi cel korak,
 // igralec obstane do ene dolžine koraka (~5 px, ~8 px s sprintom) od roba.
 export const CONTACT_MARGIN = 8;
+
+// Strel (teden 5): krogla je krog { x, y, vx, vy, r }; x, y = SREDIŠČE kroga
+export const BULLET_SPEED = 700; // px/s (uporabi se pri premiku krogel)
+export const BULLET_RADIUS = 5;
+export const BULLET_COLOR = "#fbbf24";
+export const SHOT_COOLDOWN = 0.2; // s med dvema streloma
+export const MIN_AIM_DISTANCE = 1; // px: bližje od tega miška ne določa smeri
+export const MOUSE_MARKER_SIZE = 6; // testni kvadratek na položaju miške
+export const MOUSE_MARKER_COLOR = "#d7e9ee";
 
 // Stanja igre (world.state)
 export const STATES = Object.freeze({

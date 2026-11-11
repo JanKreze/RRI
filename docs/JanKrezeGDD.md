@@ -15,7 +15,7 @@ Projektna faza: **lastna igra**
 | Žanr | *top-down survival* / … |
 | Platforma | *brskalnik (HTML5 Canvas + JS)* |
 | Ciljna dolžina ene seje | *4-5 min* |
-| Datum / verzija GDD | *28.10.2026* |
+| Datum / verzija GDD | *11.11.2026* |
 
 ## 2. Elevator pitch (2–3 stavki)
 
@@ -34,19 +34,19 @@ Za vsako mehaniko: **vhod → pravilo → feedback**.
 
 | # | Mehanika | Vhod | Pravilo | Feedback |
 |---|----------|------|---------|----------|
-| 1 | Premikanje | WASD | … | … |
-| 2 | Streljanje | miška | … | … |
-| 3 | Škoda / HP | — | … | … |
-| 4 | Valovi / napredek | — | … | … |
-| 5 | *menjava orožij, uporaba več orožij na enkrat (1 primary, 1 secondary) - omogoča dodajanje težjih sovražnikov* | | | |
-| 6 | *power-upi (health regen, shields, movement speed boost), 1-2x na opravljen val, vsaki igri doda edinstvenost* | | | |
-| 7 | *ranged sovražniki, oteži preživetje igralca* | | | |
+| 1 | Premikanje | *WASD, arrowkeys* | */* | *premikanje igralca* |
+| 2 | Streljanje | *miška - leftclick* | *0.2 secs* | *oranžen okrogel izstrelek* |
+| 3 | Škoda / HP | */* | */* | *oranžna barva* |
+| 4 | Valovi / napredek | */* | */* | */* |
+| 5 | *menjava orožij, uporaba več orožij na enkrat (1 primary, 1 secondary) - omogoča dodajanje težjih sovražnikov* | */* | */* | */* |
+| 6 | *power-upi (health regen, shields, movement speed boost), 1-2x na opravljen val, vsaki igri doda edinstvenost* | */* | */* | */* |
+| 7 | *ranged sovražniki, oteži preživetje igralca* | */* | */* | */* |
 
 ## 5. Igralec
 
-- Velikost / hitrost (začetne vrednosti): *???, 200*
-- Zdravje: *100*
-- Orožje / cooldown: *različna orožja planirana, trenutno neimplementirano*
+- Velikost / hitrost (začetne vrednosti): *32, 320*
+- Zdravje: */*
+- Orožje / cooldown: *različna orožja planirana, trenutno samo eno - 0.2s cooldown*
 - Omejitve: *trenutno neznane*
 
 ## 6. Sovražniki / ovire
@@ -55,27 +55,27 @@ Za vsako mehaniko: **vhod → pravilo → feedback**.
 |-----|---------|----|--------|-----------------|
 | walker | sledi | *?* | *?* | *?* |
 | runner | sledi hitro | *?* | *?* | *?* |
-| *(opcijsko)* | | | | |
+| *(opcijsko)* | *sledi počasi, počasno strelja v igralca* | *?* | *?* | *?* |
 
 Za **Dungeon Escape**: namesto valov opiši sobe, ključe, izhod.
 
 ## 7. Napredek in težavnost
 
-- Score: 
-- Valovi / sobe: 
-- Kako se otežuje: 
-- Win condition (če obstaja) / lose condition: 
+- Score: */*
+- Valovi / sobe: */*
+- Kako se otežuje: */*
+- Win condition (če obstaja) / lose condition: */*
 
 ## 8. Stanja igre
 
 - `MENU` → `PLAYING` → `GAME_OVER` (in morebiti `PAUSE`):
-- Kaj vidi igralec v vsakem stanju: *nekončano*
+- Kaj vidi igralec v vsakem stanju: *MENU ni implementiran, v PLAYING stanju vidi stanje igre + sebe + sovražnike, izstrelke etc. , v PAUSE vidi freeze frame + "PAUSE" text, GAME_OVER ni implementiran*
 
 ## 9. UI / HUD
 
-- Med igro (HP, score, val …): *nenarejen*
+- Med igro (HP, score, val …): *v PLAYING stanju vidi stanje igre + sebe + sovražnike, izstrelke etc.*
 - Meni / game over: *pause obstaja, game over še ne*
-- Dostopnost (kontrast, velikost besedila): *nenarejen*
+- Dostopnost (kontrast, velikost besedila): */*
 
 ## 10. Asseti
 
@@ -105,7 +105,7 @@ Po tednu 8: lastna igra, ne dodatni tedni polisha skupne baze kot glavni cilj. G
 ## 13. Tveganja in plan B
 
 - Kaj lahko odpade, če zmanjka časa: *več player orožij*
-- Minimalni igrivi rez (MVP): *še ni narejen*
+- Minimalni igrivi rez (MVP): *še ni narejen, sovražniki se ne premikajo, ne igralec ne sovražniki ne morejo umreti*
 
 ## 14. Dnevnik sprememb GDD
 
@@ -115,6 +115,7 @@ Po tednu 8: lastna igra, ne dodatni tedni polisha skupne baze kot glavni cilj. G
 | 21.10.2026 | Game + js mapa |
 | 28.10.2026 | Časovne mehanike |
 | 4.11.2026 | Ovire, entiteta sovražnik |
+| 11.11.2026 | Bullets, streljanje |
 ---
 
 *Oddaja: ta GDD + povezava do repozitorija. Posodobi pred demom lastne igre (`projekt/`).*

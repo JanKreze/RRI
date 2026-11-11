@@ -20,7 +20,7 @@ const ctx = canvas.getContext("2d");
 const world = createWorld(canvas.width, canvas.height);
 
 // --- Vhod -----------------------------------------------------------------
-initInput();
+initInput(canvas, world.mouse);
 onKeyPress((key) => {
   if (key === "f3") world.debug = !world.debug;
   if (key === "p") togglePause(world);

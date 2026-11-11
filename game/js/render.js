@@ -8,6 +8,10 @@ import {
   STATES,
   WALL_COLOR,
   PLAYER_HIT_COLOR,
+  BULLET_COLOR,
+  ENEMY_HIT_COLOR,
+  MOUSE_MARKER_SIZE,
+  MOUSE_MARKER_COLOR,
 } from "./config.js";
 
 /**
@@ -32,7 +36,7 @@ export function draw(ctx, world, W, H) {
 
   // Sovražniki (vidni vsak frejm, tudi v PAUSED)
   for (const enemy of world.enemies) {
-    ctx.fillStyle = enemy.color;
+    ctx.fillStyle = enemy.flash > 0 ? ENEMY_HIT_COLOR : enemy.color;
     ctx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);
   }
 
@@ -46,6 +50,24 @@ export function draw(ctx, world, W, H) {
   ctx.fillRect(player.x + 8, player.y + 8, 6, 6);
   ctx.fillRect(player.x + 18, player.y + 8, 6, 6);
 
+  // Krogle (krog s središčem x, y)
+  ctx.fillStyle = BULLET_COLOR;
+  for (const b of world.bullets) {
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Test (korak 1): kvadratek na položaju miške — mora sovpadati s kazalcem
+  const m = world.mouse;
+  ctx.fillStyle = MOUSE_MARKER_COLOR;
+  ctx.fillRect(
+    m.x - MOUSE_MARKER_SIZE / 2,
+    m.y - MOUSE_MARKER_SIZE / 2,
+    MOUSE_MARKER_SIZE,
+    MOUSE_MARKER_SIZE
+  );
+
   // Trenutno stanje igre
   ctx.fillStyle = "#e8eaed";
   ctx.font = "14px monospace";
@@ -53,12 +75,14 @@ export function draw(ctx, world, W, H) {
   ctx.textBaseline = "top";
   ctx.fillText(state, 12, 12);
 
-  if (debug) drawDebug(ctx, player);
+  if (debug) drawDebug(ctx, world);
   if (state === STATES.PAUSED) drawPause(ctx, W, H);
 }
 
-/** Debug: izpiše pozicijo igralca pod oznako stanja. */
-function drawDebug(ctx, player) {
+/** Debug: pozicija igralca, miška in zadnja krogla pod oznako stanja. */
+function drawDebug(ctx, world) {
+  const { player, mouse, bullets } = world;
+  const last = bullets[bullets.length - 1];
   ctx.fillStyle = "#e8eaed";
   ctx.font = "14px monospace";
   ctx.textAlign = "left";
@@ -68,7 +92,18 @@ function drawDebug(ctx, player) {
     12,
     32
   );
-  ctx.fillText("F3 = skrij debug", 12, 50);
+  ctx.fillText(
+    `miška: ${mouse.x.toFixed(0)}, ${mouse.y.toFixed(0)}  down: ${mouse.down}`,
+    12,
+    50
+  );
+  ctx.fillText(
+    `krogle: ${bullets.length}` +
+      (last ? `  zadnja v: ${last.vx.toFixed(2)}, ${last.vy.toFixed(2)}` : ""),
+    12,
+    68
+  );
+  ctx.fillText("F3 = skrij debug", 12, 86);
 }
 
 /** Zatemnitev in napis PAUZA čez zamrznjen svet. */

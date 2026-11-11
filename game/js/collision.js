@@ -6,7 +6,6 @@
 /**
  * AABB: ali se dva pravokotnika prekrivata?
  * Prekrivanje je, ko se prekrivata na OBEH oseh hkrati.
- * Vrača True/False
  */
 export function aabbOverlap(a, b) {
   return (
@@ -15,6 +14,18 @@ export function aabbOverlap(a, b) {
     a.y < b.y + b.h && // zgornji rob a je nad spodnjim robom b
     a.y + a.h > b.y // spodnji rob a je pod zgornjim robom b
   );
+}
+
+/**
+ * Krog { x, y, r } (x, y = središče) proti pravokotniku { x, y, w, h }.
+ * Najbližja točka pravokotnika središču kroga: če je bližje od r, se prekrivata.
+ */
+export function circleRectOverlap(c, rect) {
+  const nearestX = Math.max(rect.x, Math.min(c.x, rect.x + rect.w));
+  const nearestY = Math.max(rect.y, Math.min(c.y, rect.y + rect.h));
+  const dx = c.x - nearestX;
+  const dy = c.y - nearestY;
+  return dx * dx + dy * dy < c.r * c.r; // kvadrati: brez korena
 }
 
 /** DETECT: ali pravokotnik zadene katero koli oviro iz tabele? */

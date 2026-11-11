@@ -18,5 +18,6 @@ export function createEnemy(x, y) {
     w: ENEMY_SIZE,
     h: ENEMY_SIZE,
     color: ENEMY_COLOR,
+    flash: 0, // sekunde, ko je še obarvan po zadetku (samo feedback; HP je teden 7)
   };
 }
