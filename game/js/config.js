@@ -10,6 +10,15 @@ export const PLAYER_SIZE = 32;
 export const PLAYER_SPEED = 320; // piksli na sekundo
 export const SPRINT_MULTIPLIER = 1.6; // Shift = 1.6x hitrost
 export const PLAYER_COLOR = "#16a34a";
+export const PLAYER_MAX_HP = 30; // začetni HP (zapiši tudi v GDD)
+export const CONTACT_DAMAGE = 10; // HP, ki ga odnese en stik s sovražnikom
+export const HURT_COOLDOWN = 1.0; // s nedotakljivosti po zadetku (50 HP / 10 = 5 zadetkov)
+
+// Palica zdravja (HUD, zgoraj desno)
+export const HP_BAR_W = 160;
+export const HP_BAR_H = 14;
+export const HP_BAR_BG = "#374151";
+export const HP_BAR_FILL = "#22c55e";
 
 // Sovražnik (teden 4: samo entiteta, brez AI)
 export const ENEMY_SIZE = 32;
@@ -17,7 +26,7 @@ export const ENEMY_COLOR = "#a3e635"; // limetno zelena, da se loči od igralca
 export const ENEMY_START = { x: 640, y: 340 }; // fiksna točka, stran od ovir
 export const ENEMY_HIT_COLOR = "#f97316"; // sovražnik zatrepeta ob zadetku
 export const ENEMY_HIT_FLASH = 0.15; // s
-export const PLAYER_HIT_COLOR = "#ef4444"; // igralec se obarva ob dotiku sovražnika
+export const PLAYER_HIT_COLOR = "#ef4444"; // igralec je rdeč, dokler je hurtTimer > 0
 // px: "dotik" = igralec je tik ob sovražniku. Ker resolve razveljavi cel korak,
 // igralec obstane do ene dolžine koraka (~5 px, ~8 px s sprintom) od roba.
 export const CONTACT_MARGIN = 8;
@@ -28,8 +37,9 @@ export const BULLET_RADIUS = 5;
 export const BULLET_COLOR = "#fbbf24";
 export const SHOT_COOLDOWN = 0.2; // s med dvema streloma
 export const MIN_AIM_DISTANCE = 1; // px: bližje od tega miška ne določa smeri
+export const SHOW_MOUSE_MARKER = false; // true = spet pokaži testni kvadratek
 export const MOUSE_MARKER_SIZE = 6; // testni kvadratek na položaju miške
-export const MOUSE_MARKER_COLOR = "#d7e9ee";
+export const MOUSE_MARKER_COLOR = "#e8fdfe";
 
 // Stanja igre (world.state)
 export const STATES = Object.freeze({

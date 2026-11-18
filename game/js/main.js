@@ -7,9 +7,9 @@
  * ogromen dt, zato ga omejimo — igralec tako ne preskoči čez pol mape.
  */
 
-import { CANVAS_ID, MAX_DT } from "./config.js";
+import { CANVAS_ID, MAX_DT, STATES } from "./config.js";
 import { initInput, onKeyPress } from "./input.js";
-import { createWorld, update, togglePause } from "./world.js";
+import { createWorld, update, togglePause, resetGame } from "./world.js";
 import { draw } from "./render.js";
 
 // --- Platno ---------------------------------------------------------------
@@ -24,6 +24,8 @@ initInput(canvas, world.mouse);
 onKeyPress((key) => {
   if (key === "f3") world.debug = !world.debug;
   if (key === "p") togglePause(world);
+  // R = nova igra, samo po koncu igre (da je ne sprožimo po nesreči med igranjem)
+  if (key === "r" && world.state === STATES.GAME_OVER) resetGame(world);
 });
 
 // --- Game loop (delta time) -----------------------------------------------

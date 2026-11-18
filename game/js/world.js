@@ -9,13 +9,11 @@ import {
   STATES,
   WALLS,
   ENEMY_START,
-  CONTACT_MARGIN,
   SHOT_COOLDOWN,
 } from "./config.js";
 import { createPlayer, updatePlayer } from "./player.js";
-import { createEnemy } from "./enemies.js";
+import { createEnemy, hurtPlayerOnContact } from "./enemies.js";
 import { createBullet, updateBullets } from "./bullets.js";
-import { aabbOverlap } from "./collision.js";
 
 /**
  * Ustvari svet.
@@ -37,6 +35,19 @@ export function createWorld(W, H) {
   };
 }
 
+/**
+ * Nova igra brez osveževanja strani: nov igralec (max HP, začetna pozicija,
+ * hurtTimer = 0), nov sovražnik, prazne krogle, state = PLAYING.
+ * Miška, debug in ovire ostanejo.
+ */
+export function resetGame(world) {
+  world.player = createPlayer(world.W, world.H);
+  world.enemies = [createEnemy(ENEMY_START.x, ENEMY_START.y)];
+  world.bullets = [];
+  world.shotTimer = 0;
+  world.state = STATES.PLAYING;
+}
+
 /** Preklopi PLAYING <-> PAUSED. V drugih stanjih ne naredi nič. */
 export function togglePause(world) {
   if (world.state === STATES.PLAYING) world.state = STATES.PAUSED;
@@ -55,16 +66,15 @@ export function update(world, dt) {
   const solids = [...world.walls, ...world.enemies];
   updatePlayer(world.player, dt, world.W, world.H, solids);
 
-  // Samo feedback (HP je teden 6): dotik = igralec je tik ob sovražniku.
-  // Ker sta trdna, se ne moreta prekrivati, zato preverimo z majhno rezervo.
-  world.player.touchingEnemy = world.enemies.some((e) =>
-    aabbOverlap(world.player, {
-      x: e.x - CONTACT_MARGIN,
-      y: e.y - CONTACT_MARGIN,
-      w: e.w + 2 * CONTACT_MARGIN,
-      h: e.h + 2 * CONTACT_MARGIN,
-    })
-  );
+  // Škoda ob stiku s sovražnikom (hurtTimer v updatePlayer že teče z dt)
+  hurtPlayerOnContact(world.player, world.enemies);
+
+  // Konec igre: update sveta se od naslednjega frejma ustavi (state != PLAYING)
+  if (world.player.hp <= 0) {
+    world.state = STATES.GAME_OVER;
+    return;
+  }
+
   // Krogle: premik + izginotje (zunaj platna, zid, sovražnik)
   world.bullets = updateBullets(
     world.bullets,

@@ -8,6 +8,7 @@ import {
   PLAYER_SPEED,
   SPRINT_MULTIPLIER,
   PLAYER_COLOR,
+  PLAYER_MAX_HP,
 } from "./config.js";
 import { keys } from "./input.js";
 import { moveWithWalls } from "./collision.js";
@@ -25,6 +26,9 @@ export function createPlayer(W, H) {
     h: PLAYER_SIZE,
     speed: PLAYER_SPEED,
     color: PLAYER_COLOR,
+    hp: PLAYER_MAX_HP,
+    maxHp: PLAYER_MAX_HP,
+    hurtTimer: 0, // sekunde nedotakljivosti po zadetku (0 = lahko ga zadene)
   };
 }
 
@@ -43,6 +47,9 @@ function clamp(value, min, max) {
  * @param {Array} solids — trdni objekti { x, y, w, h } (ovire, sovražniki)
  */
 export function updatePlayer(player, dt, W, H, solids) {
+  // Nedotakljivost po zadetku se izteka z dt (ne gre pod 0)
+  player.hurtTimer = Math.max(0, player.hurtTimer - dt);
+
   let dx = 0;
   let dy = 0;
 

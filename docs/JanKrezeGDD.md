@@ -15,7 +15,7 @@ Projektna faza: **lastna igra**
 | Žanr | *top-down survival* / … |
 | Platforma | *brskalnik (HTML5 Canvas + JS)* |
 | Ciljna dolžina ene seje | *4-5 min* |
-| Datum / verzija GDD | *11.11.2026* |
+| Datum / verzija GDD | *18.11.2026* |
 
 ## 2. Elevator pitch (2–3 stavki)
 
@@ -36,7 +36,7 @@ Za vsako mehaniko: **vhod → pravilo → feedback**.
 |---|----------|------|---------|----------|
 | 1 | Premikanje | *WASD, arrowkeys* | */* | *premikanje igralca* |
 | 2 | Streljanje | *miška - leftclick* | *0.2 secs* | *oranžen okrogel izstrelek* |
-| 3 | Škoda / HP | */* | */* | *oranžna barva* |
+| 3 | Škoda / HP | *kontakt z sovražnikom* | *30 starting HP, 10 škode/kontakt, 1 sec invulnerability timer* | *oranžna barva* |
 | 4 | Valovi / napredek | */* | */* | */* |
 | 5 | *menjava orožij, uporaba več orožij na enkrat (1 primary, 1 secondary) - omogoča dodajanje težjih sovražnikov* | */* | */* | */* |
 | 6 | *power-upi (health regen, shields, movement speed boost), 1-2x na opravljen val, vsaki igri doda edinstvenost* | */* | */* | */* |
@@ -45,7 +45,7 @@ Za vsako mehaniko: **vhod → pravilo → feedback**.
 ## 5. Igralec
 
 - Velikost / hitrost (začetne vrednosti): *32, 320*
-- Zdravje: */*
+- Zdravje: *starting HP 30*
 - Orožje / cooldown: *različna orožja planirana, trenutno samo eno - 0.2s cooldown*
 - Omejitve: *trenutno neznane*
 
@@ -116,6 +116,7 @@ Po tednu 8: lastna igra, ne dodatni tedni polisha skupne baze kot glavni cilj. G
 | 28.10.2026 | Časovne mehanike |
 | 4.11.2026 | Ovire, entiteta sovražnik |
 | 11.11.2026 | Bullets, streljanje |
+| 18.11.2026 | HP, škoda, game over |
 ---
 
 *Oddaja: ta GDD + povezava do repozitorija. Posodobi pred demom lastne igre (`projekt/`).*

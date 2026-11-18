@@ -76,7 +76,13 @@ game/
 - **Premik in izginotje:** `updateBullets` premakne kroglo za `vx * BULLET_SPEED * dt` (700 px/s) in z `Array.filter` odstrani tiste, ki zapustijo platno ali zadanejo zid ali sovražnika.
 - **Sovražnik** ob zadetku za 0,15 s zasveti oranžno (kill/score pride v tednu 7).
 
+## Teden 6 — HP, škoda, game over
+ 
+- **HP:** igralec ima `hp`, `maxHp` (30) in `hurtTimer`; palica zdravja zgoraj desno (`drawHpBar` v `render.js`) se krajša sorazmerno z `hp / maxHp`.
+- **Škoda:** stik s sovražnikom odvzame `CONTACT_DAMAGE` (10) HP (`hurtPlayerOnContact` v `enemies.js`). Nato je igralec `HURT_COOLDOWN` (1 s) nedotakljiv in rdeč, zato škoda ni vsak frejm. Ob stiku ~2 s igralec umre.
+- **Game over:** ko `hp <= 0`, `world.state = GAME_OVER`; update sveta se ustavi, na platnu je napis GAME OVER. Tipka `R` kliče `resetGame` (nov igralec in sovražnik, prazne krogle, `state = PLAYING`).
+- **Pavza** in `GAME_OVER` ne povzročata škode (update se ne izvaja).
 ## Načrt (naslednji tedni)
-
-- Teden 6: HP in GAME_OVER.
+ 
+- Teden 7: sovražnik dobi HP, kill in valovi.
 - Teden 8: seek (sovražnik sledi igralcu).
