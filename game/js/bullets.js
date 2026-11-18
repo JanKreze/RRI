@@ -9,10 +9,12 @@
 import {
   BULLET_RADIUS,
   BULLET_SPEED,
+  BULLET_DAMAGE,
   MIN_AIM_DISTANCE,
   ENEMY_HIT_FLASH,
 } from "./config.js";
 import { circleRectOverlap } from "./collision.js";
+import { addPopup } from "./popups.js";
 
 /**
  * Ustvari kroglo v središču igralca, usmerjeno proti miški.
@@ -46,19 +48,19 @@ function isOutside(b, W, H) {
 }
 
 /**
- * Premakne vse krogle in vrne NOV seznam brez tistih, ki so izginile
- * (zunaj platna, zadele zid ali sovražnika). Array.filter ne spreminja
+ * Premakne vse krogle in jih nadomesti z NOVIM seznamom brez tistih, ki so
+ * izginile (zunaj platna, zadele zid ali sovražnika). Array.filter ne spreminja
  * polja med iteracijo, zato ne more preskočiti sosednje krogle (za razliko
  * od splice v zanki naprej).
- * @param {Array} bullets
+ * Zadetek: sovražnik izgubi BULLET_DAMAGE HP; ob hp <= 0 se odstrani iz
+ * world.enemies, igralec dobi sovražnikove točke (world.score += points).
+ * @param {object} world — { bullets, enemies, walls, W, H, score }
  * @param {number} dt — sekunde
- * @param {number} W
- * @param {number} H
- * @param {Array} walls — { x, y, w, h }
- * @param {Array} enemies — { x, y, w, h, flash }
  */
-export function updateBullets(bullets, dt, W, H, walls, enemies) {
-  return bullets.filter((b) => {
+export function updateBullets(world, dt) {
+  const { W, H, walls, enemies } = world;
+
+  world.bullets = world.bullets.filter((b) => {
     // Premik (px/s * dt)
     b.x += b.vx * BULLET_SPEED * dt;
     b.y += b.vy * BULLET_SPEED * dt;
@@ -68,13 +70,20 @@ export function updateBullets(bullets, dt, W, H, walls, enemies) {
     // Zid: krogla izgine (isti detect kot pri igralcu, samo krog proti pravokotniku)
     if (walls.some((wall) => circleRectOverlap(b, wall))) return false;
 
-    // Sovražnik: krogla izgine, sovražnik zatrepeta (kill/score je teden 7)
-    const hit = enemies.find((e) => circleRectOverlap(b, e));
+    // Sovražnik: krogla izgine, sovražnik izgubi HP in zatrepeta.
+    // (hp > 0: že uničenega sovražnika v tem frejmu krogla ne zadene še enkrat)
+    const hit = enemies.find((e) => e.hp > 0 && circleRectOverlap(b, e));
     if (hit) {
+      hit.hp -= BULLET_DAMAGE;
+      addPopup(world, hit.x + hit.w / 2, hit.y, `-${BULLET_DAMAGE}`); // nad sovražnikom
       hit.flash = ENEMY_HIT_FLASH;
+      if (hit.hp <= 0) world.score += hit.points;
       return false;
     }
 
     return true; // krogla ostane
   });
+
+  // Uničeni sovražniki izginejo (nov seznam, kot pri kroglah)
+  world.enemies = enemies.filter((e) => e.hp > 0);
 }

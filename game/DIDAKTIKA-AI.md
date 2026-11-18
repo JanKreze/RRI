@@ -83,6 +83,12 @@ game/
 - **Game over:** ko `hp <= 0`, `world.state = GAME_OVER`; update sveta se ustavi, na platnu je napis GAME OVER. Tipka `R` kliče `resetGame` (nov igralec in sovražnik, prazne krogle, `state = PLAYING`).
 - **Pavza** in `GAME_OVER` ne povzročata škode (update se ne izvaja).
 ## Načrt (naslednji tedni)
+
+## Teden 7 — Score, valovi, HUD
  
-- Teden 7: sovražnik dobi HP, kill in valovi.
+- **Score:** igralec ima score, ob vsakem ubitem sovražniku se poveča za 50.
+- **Valovi:** sovražniki se ob vsakem valovu spawnajo na robu platna, vsak z svojo palico življenja. Ko jih igralec usteli, se jim ta palica zmanjša, ko jim zmanjka HP-ja so izbrisani. Ko ni več sovražnikov, se spawn-a naslednji val, tokrat z več sovražniki. Linear scaling.
+- **HUD:** zatemnjen kvadrat v ozadju. Na njem so igralčev HP (v številkah) overlay-an na palici življenja. Pod njem so število valov, število točk. na levi so state in opcijsko debug elementi.
+
+## Načrt (naslednji tedni)
 - Teden 8: seek (sovražnik sledi igralcu).

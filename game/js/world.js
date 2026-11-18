@@ -8,12 +8,12 @@ import {
   DEBUG_DEFAULT,
   STATES,
   WALLS,
-  ENEMY_START,
   SHOT_COOLDOWN,
 } from "./config.js";
 import { createPlayer, updatePlayer } from "./player.js";
-import { createEnemy, hurtPlayerOnContact } from "./enemies.js";
+import { spawnWave, hurtPlayerOnContact } from "./enemies.js";
 import { createBullet, updateBullets } from "./bullets.js";
+import { updatePopups } from "./popups.js";
 
 /**
  * Ustvari svet.
@@ -21,30 +21,37 @@ import { createBullet, updateBullets } from "./bullets.js";
  * @param {number} H — višina platna
  */
 export function createWorld(W, H) {
-  return {
+  const world = {
     W,
     H,
     state: STATES.PLAYING, // MENU | PAUSED | PLAYING | GAME_OVER (glej config.js)
     debug: DEBUG_DEFAULT,
     player: createPlayer(W, H),
     walls: WALLS,
-    enemies: [createEnemy(ENEMY_START.x, ENEMY_START.y)],
+    enemies: [], // napolni spawnWave
+    score: 0,
+    wave: 0, // spawnWave(world, 1) ga nastavi na 1
     mouse: { x: 0, y: 0, down: false }, // koordinate platna; listenerji v input.js
     bullets: [],
+    popups: [], // lebdeče številke škode
     shotTimer: 0, // sekunde do naslednjega dovoljenega strela
   };
+  spawnWave(world, 1); // potrebuje world.player in world.walls
+  return world;
 }
 
 /**
  * Nova igra brez osveževanja strani: nov igralec (max HP, začetna pozicija,
- * hurtTimer = 0), nov sovražnik, prazne krogle, state = PLAYING.
- * Miška, debug in ovire ostanejo.
+ * hurtTimer = 0), score = 0, prazne krogle, val 1 z novimi sovražniki,
+ * state = PLAYING. Miška, debug in ovire ostanejo.
  */
 export function resetGame(world) {
-  world.player = createPlayer(world.W, world.H);
-  world.enemies = [createEnemy(ENEMY_START.x, ENEMY_START.y)];
+  world.player = createPlayer(world.W, world.H); // pred spawnom: spawn gleda igralca
   world.bullets = [];
+  world.popups = [];
   world.shotTimer = 0;
+  world.score = 0;
+  spawnWave(world, 1); // nastavi wave = 1 in zamenja enemies
   world.state = STATES.PLAYING;
 }
 
@@ -76,14 +83,12 @@ export function update(world, dt) {
   }
 
   // Krogle: premik + izginotje (zunaj platna, zid, sovražnik)
-  world.bullets = updateBullets(
-    world.bullets,
-    dt,
-    world.W,
-    world.H,
-    world.walls,
-    world.enemies
-  );
+  updatePopups(world, dt); // pred krogli: nov popup se prvi frejm še ne premakne
+  updateBullets(world, dt);
+
+  // PRAVILO VALOV: ko je arena prazna (vsi sovražniki uničeni), se začne
+  // naslednji val z več sovražniki: spawnWave(world, world.wave + 1)
+  if (world.enemies.length === 0) spawnWave(world, world.wave + 1);
 
   // Zatrepetanje sovražnika po zadetku usahne
   for (const e of world.enemies) e.flash = Math.max(0, e.flash - dt);

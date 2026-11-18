@@ -10,6 +10,10 @@ import {
   PLAYER_HIT_COLOR,
   BULLET_COLOR,
   ENEMY_HIT_COLOR,
+  ENEMY_BAR_H,
+  ENEMY_BAR_FILL,
+  POPUP_LIFETIME,
+  POPUP_COLOR,
   SHOW_MOUSE_MARKER,
   MOUSE_MARKER_SIZE,
   MOUSE_MARKER_COLOR,
@@ -43,6 +47,13 @@ export function draw(ctx, world, W, H) {
   for (const enemy of world.enemies) {
     ctx.fillStyle = enemy.flash > 0 ? ENEMY_HIT_COLOR : enemy.color;
     ctx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);
+
+    // Majhna palica HP nad sovražnikom (pod njim, če je ob zgornjem robu)
+    const barY = enemy.y - 8 >= 0 ? enemy.y - 8 : enemy.y + enemy.h + 4;
+    ctx.fillStyle = HP_BAR_BG;
+    ctx.fillRect(enemy.x, barY, enemy.w, ENEMY_BAR_H);
+    ctx.fillStyle = ENEMY_BAR_FILL;
+    ctx.fillRect(enemy.x, barY, enemy.w * (enemy.hp / enemy.maxHp), ENEMY_BAR_H);
   }
 
   // Igralec (v PAUSED se še vedno nariše — zamrznjen svet);
@@ -62,6 +73,20 @@ export function draw(ctx, world, W, H) {
     ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
     ctx.fill();
   }
+
+  // Lebdeče številke škode (bledijo skozi življenjsko dobo)
+  ctx.font = "bold 16px system-ui, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = "rgba(0, 0, 0, 0.7)";
+  for (const p of world.popups) {
+    ctx.globalAlpha = Math.max(0, 1 - p.age / POPUP_LIFETIME);
+    ctx.strokeText(p.text, p.x, p.y);
+    ctx.fillStyle = POPUP_COLOR;
+    ctx.fillText(p.text, p.x, p.y);
+  }
+  ctx.globalAlpha = 1;
 
   // Test: kvadratek na položaju miške (izklopljen; SHOW_MOUSE_MARKER v config.js)
   if (SHOW_MOUSE_MARKER) {
@@ -84,16 +109,27 @@ export function draw(ctx, world, W, H) {
 
   // Palica zdravja med igro (in v pavzi, ko je svet zamrznjen)
   if (state === STATES.PLAYING || state === STATES.PAUSED) {
+    drawHud(ctx, world, W); // najprej temna plošča in besedilo
     drawHpBar(ctx, player, W);
   }
 
   if (debug) drawDebug(ctx, world);
   if (state === STATES.PAUSED) drawPause(ctx, W, H);
-  if (state === STATES.GAME_OVER) drawGameOver(ctx, W, H);
+  if (state === STATES.GAME_OVER) drawGameOver(ctx, world, W, H);
+}
+
+/** HUD pod palico zdravja: val in točke, desno poravnano. */
+function drawHud(ctx, world, W) {
+  ctx.fillStyle = "#e8eaed";
+  ctx.font = "bold 16px system-ui, sans-serif";
+  ctx.textAlign = "right";
+  ctx.textBaseline = "top";
+  ctx.fillText(`Val: ${world.wave}`, W - 12, 38);
+  ctx.fillText(`Točke: ${world.score}`, W - 12, 60);
 }
 
 /** Temnejši overlay in veliko besedilo GAME OVER čez zamrznjen svet. */
-function drawGameOver(ctx, W, H) {
+function drawGameOver(ctx, world, W, H) {
   ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
   ctx.fillRect(0, 0, W, H);
 
@@ -104,8 +140,10 @@ function drawGameOver(ctx, W, H) {
   ctx.fillText("GAME OVER", W / 2, H / 2);
 
   ctx.fillStyle = "#e8eaed";
+  ctx.font = "20px system-ui, sans-serif";
+  ctx.fillText(`Val ${world.wave} · Točke ${world.score}`, W / 2, H / 2 + 44);
   ctx.font = "16px system-ui, sans-serif";
-  ctx.fillText("R = nova igra", W / 2, H / 2 + 44);
+  ctx.fillText("R = nova igra", W / 2, H / 2 + 74);
 }
 
 /** Palica zdravja zgoraj desno: temno ozadje + zelen del širine hp / maxHp. */
@@ -118,6 +156,17 @@ function drawHpBar(ctx, player, W) {
 
   ctx.fillStyle = HP_BAR_FILL;
   ctx.fillRect(x, y, HP_BAR_W * (player.hp / player.maxHp), HP_BAR_H);
+
+  // Številčni prikaz HP na sredini palice (z obrobo, da je berljiv na obeh barvah)
+  const label = `${player.hp} / ${player.maxHp}`;
+  ctx.font = "bold 13px system-ui, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = "rgba(0, 0, 0, 0.6)";
+  ctx.strokeText(label, x + HP_BAR_W / 2, y + HP_BAR_H / 2 + 1);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillText(label, x + HP_BAR_W / 2, y + HP_BAR_H / 2 + 1);
 }
 
 /** Debug: pozicija igralca, miška in zadnja krogla pod oznako stanja. */
@@ -149,7 +198,12 @@ function drawDebug(ctx, world) {
     12,
     86
   );
-  ctx.fillText("F3 = skrij debug", 12, 104);
+  ctx.fillText(
+    `val: ${world.wave}  točke: ${world.score}  sovražniki: ${world.enemies.length}`,
+    12,
+    104
+  );
+  ctx.fillText("F3 = skrij debug", 12, 122);
 }
 
 /** Zatemnitev in napis PAUZA čez zamrznjen svet. */

@@ -18,16 +18,16 @@ Seek (`updateEnemy`) je še vedno teden 8. Danes sovražniki smejo stati.
 
 ## Korak 0 (~10 min)
 
-- [ ] HP / game over / strel delujejo.
-- [ ] Imaš vsaj eno entiteto sovražnika.
+- [x] HP / game over / strel delujejo.
+- [x] Imaš vsaj eno entiteto sovražnika.
 
 ---
 
 ## Korak 1 — Uničenje in score (~40–50 min)
 
-- [ ] Sovražnik ima lahko `hp` (1 zadetek = smrt je OK).
-- [ ] Trk `bullet` vs. `enemy`: odstrani kroglo, zmanjšaj/ubit sovražnika, `score += …`.
-- [ ] Konstanta `POINTS_PER_KILL`.
+- [x] Sovražnik ima lahko `hp` (1 zadetek = smrt je OK). *jaz osebno bi raje imel 2 zadetka = smrt ter manj sovražnikov*
+- [x] Trk `bullet` vs. `enemy`: odstrani kroglo, zmanjšaj/ubit sovražnika, `score += …`.
+- [x] Konstanta `POINTS_PER_KILL`.
 
 Test: ustreli dummy — izgine (ali umre), score zraste, v HUD se vidi.
 
@@ -37,22 +37,22 @@ Test: ustreli dummy — izgine (ali umre), score zraste, v HUD se vidi.
 
 ## Korak 2 — Valovi (~50–70 min)
 
-- [ ] `wave` začne pri 1. Funkcija `spawnWave(n)` nastavi `wave = n` in napolni `enemies`.
-- [ ] Spawn na robu platna, ne v zidu in ne na igralcu.
-- [ ] Naslednji val: ko je `enemies.length === 0`, pokliči `spawnWave(wave + 1)`. To pravilo zapiši v komentar in v GDD.
-- [ ] Val 2 ima več sovražnikov kot val 1 (npr. `2 + wave`).
+- [x] `wave` začne pri 1. Funkcija `spawnWave(n)` nastavi `wave = n` in napolni `enemies`.
+- [x] Spawn na robu platna, ne v zidu in ne na igralcu.
+- [x] Naslednji val: ko je `enemies.length === 0`, pokliči `spawnWave(wave + 1)`. To pravilo zapiši v komentar in v GDD.
+- [x] Val 2 ima več sovražnikov kot val 1 (npr. `2 + wave`).
 
 Sovražniki smejo stati. Seek in dva tipa sta **teden 8**.
 
-- [ ] `resetGame` ponastavi `score`, `wave`, `enemies`.
+- [x] `resetGame` ponastavi `score`, `wave`, `enemies`.
 
 ---
 
 ## Korak 3 — HUD (~25–35 min)
 
-- [ ] Med PLAYING: palica HP (teden 6) plus točke in val (`fillText`) na temnem pravokotniku, da se berejo.
-- [ ] GAME_OVER: končne točke vidne.
-- [ ] Palica se ujema s `player.hp` — če zadeneš, se takoj skrajša.
+- [x] Med PLAYING: palica HP (teden 6) plus točke in val (`fillText`) na temnem pravokotniku, da se berejo.
+- [x] GAME_OVER: končne točke vidne.
+- [x] Palica se ujema s `player.hp` — če zadeneš, se takoj skrajša.
 
 Ne delaj HTML CSS menija namesto zanke — če dodaš HTML HUD, naj se ujema s `state`.
 
@@ -60,8 +60,8 @@ Ne delaj HTML CSS menija namesto zanke — če dodaš HTML HUD, naj se ujema s `
 
 ## Korak 4 — GDD (~20–30 min)
 
-- [ ] §4/§7: progressija (kako se val otežuje).
-- [ ] Win condition, če ga imaš; sicer “endless survival” + lose = HP 0.
+- [x] §4/§7: progressija (kako se val otežuje).
+- [x] Win condition, če ga imaš; sicer “endless survival” + lose = HP 0.
 
 ---
 
@@ -69,8 +69,8 @@ Ne delaj HTML CSS menija namesto zanke — če dodaš HTML HUD, naj se ujema s `
 
 Prompt A: model `wave` + spawn, **pseudokoda ali majhen kos**.
 
-- [ ] Spremeni krivuljo težavnosti (npr. +1 enemy na val vs. +2) in opiši občutek.
-- [ ] Commit: `teden 7: score, valovi, HUD`.
+- [x] Spremeni krivuljo težavnosti (npr. +1 enemy na val vs. +2) in opiši občutek.
+- [x] Commit: `teden 7: score, valovi, HUD`.
 
 ---
 
