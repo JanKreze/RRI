@@ -11,7 +11,7 @@ import {
   SHOT_COOLDOWN,
 } from "./config.js";
 import { createPlayer, updatePlayer } from "./player.js";
-import { spawnWave, hurtPlayerOnContact } from "./enemies.js";
+import { spawnWave, updateEnemy, hurtPlayerOnContact } from "./enemies.js";
 import { createBullet, updateBullets } from "./bullets.js";
 import { updatePopups } from "./popups.js";
 
@@ -73,6 +73,9 @@ export function update(world, dt) {
   const solids = [...world.walls, ...world.enemies];
   updatePlayer(world.player, dt, world.W, world.H, solids);
 
+  // Seek: vsak sovražnik se premika proti igralcu (isti updateEnemy za vse tipe)
+  for (const e of world.enemies) updateEnemy(e, dt, world);
+
   // Škoda ob stiku s sovražnikom (hurtTimer v updatePlayer že teče z dt)
   hurtPlayerOnContact(world.player, world.enemies);
 
@@ -102,5 +105,4 @@ export function update(world, dt) {
       world.shotTimer = SHOT_COOLDOWN;
     }
   }
-  // Kasneje (teden 8): updateEnemy za vsakega sovražnika.
 }

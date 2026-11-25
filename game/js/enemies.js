@@ -1,43 +1,75 @@
 /**
- * enemies.js — entiteta sovražnika, njegova škoda in valovi.
- * Isti oblikovni vzorec kot igralec: { x, y, w, h, color } + hp.
+ * enemies.js — sovražniki: tipi, seek, škoda in valovi.
+ * Isti oblikovni vzorec kot igralec: { x, y, w, h, color } + hp, speed, points.
  * Teden 4: sovražnik stoji. Teden 6: stik odvzame igralcu HP.
- * Teden 7: sovražnik ima HP in točke, valovi ga spawnajo na robu.
- * Seek (teden 8) pride kasneje: danes sovražniki stojijo.
+ * Teden 7: HP, točke, valovi na robu. Teden 8: seek in dva tipa (KINDS).
  */
 
 import {
-  ENEMY_SIZE,
-  ENEMY_COLOR,
-  ENEMY_HP,
-  POINTS_PER_KILL,
+  KINDS,
   CONTACT_MARGIN,
   CONTACT_DAMAGE,
   HURT_COOLDOWN,
   WAVE_START_ENEMIES,
   WAVE_ENEMY_STEP,
+  WAVE_RUNNERS_FROM,
+  WAVE_RUNNER_SHARE,
   SPAWN_MIN_PLAYER_DISTANCE,
   SPAWN_GAP,
 } from "./config.js";
-import { aabbOverlap } from "./collision.js";
+import { aabbOverlap, moveWithWalls } from "./collision.js";
 
 /**
- * Ustvari sovražnika na dani točki.
+ * Ustvari sovražnika danega tipa (ključ v KINDS) na dani točki.
  * @param {number} x — levi rob
  * @param {number} y — zgornji rob
+ * @param {string} kind — "walker" | "runner"
  */
-export function createEnemy(x, y) {
+export function createEnemy(x, y, kind = "walker") {
+  const k = KINDS[kind];
   return {
+    kind,
     x,
     y,
-    w: ENEMY_SIZE,
-    h: ENEMY_SIZE,
-    color: ENEMY_COLOR,
-    hp: ENEMY_HP,
-    maxHp: ENEMY_HP,
-    points: POINTS_PER_KILL, // točke za igralca ob uničenju
+    w: k.size,
+    h: k.size,
+    speed: k.speed, // px/s
+    color: k.color,
+    hp: k.hp,
+    maxHp: k.hp,
+    points: k.points, // točke za igralca ob uničenju
     flash: 0, // sekunde, ko je še obarvan po zadetku s kroglo (samo feedback)
   };
+}
+
+// --- Seek -------------------------------------------------------------------
+
+/**
+ * Seek: sovražnik se premika proti središču igralca. Isti za vse tipe —
+ * tip menja samo `speed`. Brez pathfindinga: ob zidu se ustavi (po oseh drsi).
+ * Premik gre skozi moveWithWalls (isto kot pri igralcu); trdni so zidovi,
+ * igralec in drugi sovražniki (da se ne prekrivajo in ne ujamejo igralca).
+ * @param {object} e — sovražnik
+ * @param {number} dt — sekunde
+ * @param {object} world — { player, walls, enemies }
+ */
+export function updateEnemy(e, dt, world) {
+  const { player } = world;
+
+  // Vektor od središča sovražnika do središča igralca
+  const dx = player.x + player.w / 2 - (e.x + e.w / 2);
+  const dy = player.y + player.h / 2 - (e.y + e.h / 2);
+  const dist = Math.hypot(dx, dy);
+  if (dist < 1) return; // na istem mestu: smer ni določena
+
+  // Enotski vektor * hitrost * dt
+  const step = e.speed * dt;
+  const solids = [
+    ...world.walls,
+    player,
+    ...world.enemies.filter((o) => o !== e),
+  ];
+  moveWithWalls(e, (dx / dist) * step, (dy / dist) * step, solids);
 }
 
 /**
@@ -68,11 +100,11 @@ export function hurtPlayerOnContact(player, enemies) {
 
 // --- Valovi ---------------------------------------------------------------
 
-/** Naključna točka (levi zgornji kot) tik ob robu platna. */
-function randomEdgePosition(W, H) {
+/** Naključna točka (levi zgornji kot) tik ob robu platna za sovražnika velikosti size. */
+function randomEdgePosition(W, H, size) {
   const side = Math.floor(Math.random() * 4); // 0 zgoraj, 1 desno, 2 spodaj, 3 levo
-  const maxX = W - ENEMY_SIZE;
-  const maxY = H - ENEMY_SIZE;
+  const maxX = W - size;
+  const maxY = H - size;
   if (side === 0) return { x: Math.random() * maxX, y: 0 };
   if (side === 1) return { x: maxX, y: Math.random() * maxY };
   if (side === 2) return { x: Math.random() * maxX, y: maxY };
@@ -88,14 +120,14 @@ function grow(rect, m) {
  * Poišče prosto točko na robu: ne v zidu, ne blizu igralca, ne na drugem
  * sovražniku. Vrne null, če je po 200 poskusih ne najde.
  */
-function findSpawnPosition(world, placed) {
+function findSpawnPosition(world, placed, size) {
   const { player, walls, W, H } = world;
   const pcx = player.x + player.w / 2;
   const pcy = player.y + player.h / 2;
 
   for (let attempt = 0; attempt < 200; attempt++) {
-    const p = randomEdgePosition(W, H);
-    const rect = { x: p.x, y: p.y, w: ENEMY_SIZE, h: ENEMY_SIZE };
+    const p = randomEdgePosition(W, H, size);
+    const rect = { x: p.x, y: p.y, w: size, h: size };
 
     // dovolj daleč od igralca (da ga ne poškoduje takoj)
     const dist = Math.hypot(rect.x + rect.w / 2 - pcx, rect.y + rect.h / 2 - pcy);
@@ -113,8 +145,9 @@ function findSpawnPosition(world, placed) {
 
 /**
  * Nov val: nastavi world.wave = n in napolni world.enemies.
- * Val n ima WAVE_START_ENEMIES + WAVE_ENEMY_STEP * (n - 1) sovražnikov na robu
- * platna. Sovražniki stojijo.
+ * Skupno število: WAVE_START_ENEMIES + WAVE_ENEMY_STEP * (n - 1).
+ * Val 1 so sami walkerji; od vala WAVE_RUNNERS_FROM je približno tretjina
+ * runnerjev (vsaj eden), ostalo walkerji.
  *
  * PRAVILO VALOV: ko je world.enemies.length === 0 (arena prazna),
  * update pokliče spawnWave(world, world.wave + 1).
@@ -122,15 +155,26 @@ function findSpawnPosition(world, placed) {
 export function spawnWave(world, n) {
   world.wave = n;
 
-  const enemies = [];
   const count = WAVE_START_ENEMIES + WAVE_ENEMY_STEP * (n - 1);
-  for (let i = 0; i < count; i++) {
-    const p = findSpawnPosition(world, enemies);
-    if (p) enemies.push(createEnemy(p.x, p.y));
+  const runners =
+    n >= WAVE_RUNNERS_FROM
+      ? Math.max(1, Math.round(count * WAVE_RUNNER_SHARE))
+      : 0;
+
+  // Najprej večji (walkerji), da jim je lažje najti prostor
+  const kinds = [
+    ...Array(count - runners).fill("walker"),
+    ...Array(runners).fill("runner"),
+  ];
+
+  const enemies = [];
+  for (const kind of kinds) {
+    const p = findSpawnPosition(world, enemies, KINDS[kind].size);
+    if (p) enemies.push(createEnemy(p.x, p.y, kind));
   }
 
   // Skrajna rešitev: arena nikoli ne sme ostati prazna (sicer bi se vali vrstili vsak frejm)
-  if (enemies.length === 0) enemies.push(createEnemy(0, 0));
+  if (enemies.length === 0) enemies.push(createEnemy(0, 0, "walker"));
 
   world.enemies = enemies;
 }

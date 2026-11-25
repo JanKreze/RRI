@@ -10,6 +10,7 @@ import {
   PLAYER_HIT_COLOR,
   BULLET_COLOR,
   ENEMY_HIT_COLOR,
+  BULLET_DAMAGE,
   ENEMY_BAR_H,
   ENEMY_BAR_FILL,
   POPUP_LIFETIME,
@@ -48,12 +49,14 @@ export function draw(ctx, world, W, H) {
     ctx.fillStyle = enemy.flash > 0 ? ENEMY_HIT_COLOR : enemy.color;
     ctx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);
 
-    // Majhna palica HP nad sovražnikom (pod njim, če je ob zgornjem robu)
-    const barY = enemy.y - 8 >= 0 ? enemy.y - 8 : enemy.y + enemy.h + 4;
-    ctx.fillStyle = HP_BAR_BG;
-    ctx.fillRect(enemy.x, barY, enemy.w, ENEMY_BAR_H);
-    ctx.fillStyle = ENEMY_BAR_FILL;
-    ctx.fillRect(enemy.x, barY, enemy.w * (enemy.hp / enemy.maxHp), ENEMY_BAR_H);
+    // Palica HP samo, če sovražnik vzdrži več kot en zadetek (walker; runner je nima)
+    if (enemy.maxHp > BULLET_DAMAGE) {
+      const barY = enemy.y - 8 >= 0 ? enemy.y - 8 : enemy.y + enemy.h + 4;
+      ctx.fillStyle = HP_BAR_BG;
+      ctx.fillRect(enemy.x, barY, enemy.w, ENEMY_BAR_H);
+      ctx.fillStyle = ENEMY_BAR_FILL;
+      ctx.fillRect(enemy.x, barY, enemy.w * (enemy.hp / enemy.maxHp), ENEMY_BAR_H);
+    }
   }
 
   // Igralec (v PAUSED se še vedno nariše — zamrznjen svet);
@@ -120,6 +123,10 @@ export function draw(ctx, world, W, H) {
 
 /** HUD pod palico zdravja: val in točke, desno poravnano. */
 function drawHud(ctx, world, W) {
+  // Temna plošča za palico, val in točke, da se berejo na kateremkoli ozadju
+  ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
+  ctx.fillRect(W - HP_BAR_W - 24, 4, HP_BAR_W + 20, 82);
+
   ctx.fillStyle = "#e8eaed";
   ctx.font = "bold 16px system-ui, sans-serif";
   ctx.textAlign = "right";

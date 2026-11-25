@@ -20,16 +20,16 @@ Zagon reference: `python3 -m http.server` v mapi `demo/`.
 
 ## Korak 0 (~10 min)
 
-- [ ] Valovi, score, HP, strel iz tedna 7 delujejo.
+- [x] Valovi, score, HP, strel iz tedna 7 delujejo.
 
 ---
 
 ## Korak 1 — Seek (~40–50 min)
 
-- [ ] `updateEnemy(e, dt)`: vektor od središča sovražnika do središča igralca, deli z `Math.hypot`, premakni z `e.speed * dt`.
-- [ ] Vsak sovražnik v `PLAYING` kliče isto funkcijo. Tip ne menja smeri, samo številke.
-- [ ] Premik gre skozi `moveWithWalls` (isto kot igralec).
-- [ ] Test: stojiš pri miru — pridejo do tebe. Odmakneš se — sledijo.
+- [x] `updateEnemy(e, dt)`: vektor od središča sovražnika do središča igralca, deli z `Math.hypot`, premakni z `e.speed * dt`.
+- [x] Vsak sovražnik v `PLAYING` kliče isto funkcijo. Tip ne menja smeri, samo številke.
+- [x] Premik gre skozi `moveWithWalls` (isto kot igralec).
+- [x] Test: stojiš pri miru — pridejo do tebe. Odmakneš se — sledijo.
 
 Pathfindinga ni. Sovražnik se ob zidu ustavi. To zapiši v README kot znano omejitev.
 
@@ -37,10 +37,10 @@ Pathfindinga ni. Sovražnik se ob zidu ustavi. To zapiši v README kot znano ome
 
 ## Korak 2 — Dva tipa (~40–50 min)
 
-- [ ] Objekt `KINDS` (ali podobno): `walker` in `runner` z različno **hitrostjo**, **HP**, **barvo**, **points**.
-- [ ] `spawnWave` od vala 2 doda oba. Val 1 je lahko samo walker.
-- [ ] V `js/render.js`: nad walkerjem (več HP) kratka palica `hp / maxHp`. Runner z 1 HP je nima.
-- [ ] GDD §6 tabela izpolnjena.
+- [x] Objekt `KINDS` (ali podobno): `walker` in `runner` z različno **hitrostjo**, **HP**, **barvo**, **points**.
+- [x] `spawnWave` od vala 2 doda oba. Val 1 je lahko samo walker.
+- [x] V `js/render.js`: nad walkerjem (več HP) kratka palica `hp / maxHp`. Runner z 1 HP je nima.
+- [x] GDD §6 tabela izpolnjena.
 
 Test: vizualno ločiš tipa v 2 sekundah igranja.
 
@@ -50,13 +50,13 @@ Test: vizualno ločiš tipa v 2 sekundah igranja.
 
 Prehodi checklist **skupna baza**:
 
-- [ ] Premik + clamp / ovire
-- [ ] Loop + `dt` + `state`
-- [ ] Strel proti miški
-- [ ] HP, `hurtTimer`, GAME_OVER, R → `resetGame`
-- [ ] Score, valovi, HUD
-- [ ] Seek + 2 tipa
-- [ ] Ni očitnih crashov v konzoli (F12) pri 2–3 minutah igre
+- [x] Premik + clamp / ovire
+- [x] Loop + `dt` + `state`
+- [x] Strel proti miški
+- [x] HP, `hurtTimer`, GAME_OVER, R → `resetGame`
+- [x] Score, valovi, HUD
+- [x] Seek + 2 tipa
+- [x] Ni očitnih crashov v konzoli (F12) pri 2–3 minutah igre *all good, no instability*
 
 Popravi 1–2 kvardarja (npr. spawn v zidu, score se ne resetira). **Ne** začni particle-jev in menijev namesto stabilizacije.
 
@@ -78,7 +78,7 @@ V svojem repoju:
 Prompt A: seek + dva tipa, **brez pathfindinga**.
 
 - [ ] Spremeni številke enega tipa (npr. runner še hitrejši, 1 HP) in razloži meta (koga ubiješ prej).
-- [ ] Commit: `teden 8: seek walker/runner — skupna baza`.
+- [ ] Commit: `teden 8: seek walker/runner — skupna baza`. *already tried changing the numbers bit I liked the original ones more*
 
 ---
 

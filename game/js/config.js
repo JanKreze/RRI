@@ -20,12 +20,13 @@ export const HP_BAR_H = 18; // dovolj visoka, da je v njej berljivo število HP
 export const HP_BAR_BG = "#374151";
 export const HP_BAR_FILL = "#22c55e";
 
-// Sovražnik (teden 4: samo entiteta, brez AI)
-export const ENEMY_SIZE = 32;
-export const ENEMY_COLOR = "#a3e635"; // limetno zelena, da se loči od igralca
-export const ENEMY_HP = 20; // 20 HP / 10 škode = 2 zadetka do smrti
+// Tipi sovražnikov (teden 8). Seek je isti za vse, tip menja samo številke.
+// BULLET_DAMAGE = 10, zato: walker 20 HP = 2 zadetka, runner 10 HP = 1 zadetek.
 export const BULLET_DAMAGE = 10; // HP, ki ga krogla odvzame sovražniku
-export const POINTS_PER_KILL = 50;
+export const KINDS = {
+  walker: { speed: 60, hp: 20, size: 32, color: "#a3e635", points: 50 }, // počasen, vzdržljiv, limetno zelen
+  runner: { speed: 150, hp: 10, size: 24, color: "#c084fc", points: 30 }, // hiter, krhek, manjši, vijoličen
+};
 
 // Lebdeče številke škode ("-10") nad sovražnikom
 export const POPUP_LIFETIME = 0.7; // s
@@ -36,6 +37,8 @@ export const POPUP_COLOR = "#fef08a";
 //   WAVE_START_ENEMIES + WAVE_ENEMY_STEP * (n - 1)   (2, 3, 4, ... pri koraku 1)
 export const WAVE_START_ENEMIES = 2;
 export const WAVE_ENEMY_STEP = 1; // +1 sovražnik na val (poskusi 2)
+export const WAVE_RUNNERS_FROM = 2; // od vala 2 naprej so v valu tudi runnerji
+export const WAVE_RUNNER_SHARE = 1 / 3; // približno tretjina sovražnikov v valu je runnerjev
 
 // Palica nad sovražnikom
 export const ENEMY_BAR_H = 4;

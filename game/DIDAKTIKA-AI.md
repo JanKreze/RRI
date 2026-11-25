@@ -2,6 +2,10 @@
 
 Majhna igra v HTML Canvas + vanilla JS, brez knjižnic. Del predmeta Razvoj iger.
 
+## Kaj je "teden 8 baza"
+
+Top-down survival: igralec se premika (WASD ali puščice), strelja proti miški in preživi čim več valov sovražnikov. Sovražniki se pojavijo na robu arene in teče(jo) proti igralcu (seek): počasni **walkerji** (20 HP, 2 zadetka) in hitri **runnerji** (10 HP, 1 zadetek, od vala 2). Stik odvzame HP (z nedotakljivostjo), HP 0 pomeni GAME OVER, `R` začne novo igro. Nov val se začne, ko je arena prazna; vsak val ima enega sovražnika več. HUD kaže HP, val in točke.
+
 ## Kako zagnati
 
 Igra uporablja ES module, zato jo odpri prek lokalnega strežnika (ne z dvoklikom na `index.html`):
@@ -23,8 +27,9 @@ Nato odpri <http://localhost:8080>.
 | `W` `A` `S` `D` ali puščice | Premik |
 | `Shift` (držati) | Sprint (1,6× hitrost) |
 | `P` | Pavza (PLAYING ↔ PAUSED) |
-| Miška: leva tipka (držati) | Strel proti kazalcu (vsakih 0,2 s) |
-| `F3` | Prikaži/skrij debug (igralec, miška, krogle) |
+| Miška: leva tipka (držati) | Strel proti kazalcu (vsakih 0,3 s) |
+| `R` | Nova igra (po GAME OVER) |
+| `F3` | Prikaži/skrij debug (igralec, miška, krogle, HP) |
 
 ## Struktura projekta
 
@@ -33,14 +38,16 @@ game/
 ├── index.html      # stran + <canvas>
 ├── style.css       # izgled
 ├── README.md
-├── lab05.md
+├── GDD.md
+├── lab03.md … lab08.md   # prompti in refleksije po tednih
 └── js/
     ├── config.js   # konstante (hitrost, barve, ...)
     ├── input.js    # stanje tipkovnice (listenerji samo beležijo)
     ├── world.js    # world.state/walls/enemies/mouse/bullets + update(world, dt)
     ├── collision.js # aabbOverlap, hitsWall, moveWithWalls
-    ├── enemies.js  # createEnemy (entiteta brez AI)
-    ├── bullets.js  # createBullet, updateBullets (premik + izginotje)
+    ├── enemies.js  # KINDS (walker/runner), updateEnemy (seek), spawnWave, škoda ob stiku
+    ├── bullets.js  # createBullet, updateBullets (premik, izginotje, zadetki, točke)
+    ├── popups.js   # lebdeče številke škode ("-10")
     ├── player.js   # podatki o igralcu + updatePlayer(dt)
     ├── render.js   # risanje
     └── main.js     # vstopna točka + game loop
@@ -70,25 +77,38 @@ game/
 
 ## Teden 5 — strel proti miški
 
-- **Miška v koordinatah platna:** `world.mouse = { x, y, down }`; listenerji so v `input.js`. Pretvorba `mouseOnCanvas` upošteva CSS povečavo in obrobo platna (`clientWidth`, `clientLeft`). Roza kvadratek kaže položaj kazalca.
+- **Miška v koordinatah platna:** `world.mouse = { x, y, down }`; listenerji so v `input.js`. Pretvorba `mouseOnCanvas` upošteva CSS povečavo in obrobo platna (`clientWidth`, `clientLeft`). Testni roza kvadratek na kazalcu je izklopljen (`SHOW_MOUSE_MARKER` v `config.js`).
 - **Strel:** držanje leve tipke ustvari kroglo `{ x, y, vx, vy, r }` v središču igralca; `vx, vy` je enotski vektor proti kazalcu (`Math.hypot`). Če je kazalec skoraj v središču igralca, krogle ni.
 - **Cooldown:** `shotTimer` se zmanjšuje z `dt`; strel je možen, ko je `<= 0`, nato se nastavi na `SHOT_COOLDOWN` (0,2 s, torej 5 strelov na sekundo).
 - **Premik in izginotje:** `updateBullets` premakne kroglo za `vx * BULLET_SPEED * dt` (700 px/s) in z `Array.filter` odstrani tiste, ki zapustijo platno ali zadanejo zid ali sovražnika.
 - **Sovražnik** ob zadetku za 0,15 s zasveti oranžno (kill/score pride v tednu 7).
 
 ## Teden 6 — HP, škoda, game over
- 
+
 - **HP:** igralec ima `hp`, `maxHp` (30) in `hurtTimer`; palica zdravja zgoraj desno (`drawHpBar` v `render.js`) se krajša sorazmerno z `hp / maxHp`.
 - **Škoda:** stik s sovražnikom odvzame `CONTACT_DAMAGE` (10) HP (`hurtPlayerOnContact` v `enemies.js`). Nato je igralec `HURT_COOLDOWN` (1 s) nedotakljiv in rdeč, zato škoda ni vsak frejm. Ob stiku ~2 s igralec umre.
 - **Game over:** ko `hp <= 0`, `world.state = GAME_OVER`; update sveta se ustavi, na platnu je napis GAME OVER. Tipka `R` kliče `resetGame` (nov igralec in sovražnik, prazne krogle, `state = PLAYING`).
 - **Pavza** in `GAME_OVER` ne povzročata škode (update se ne izvaja).
-## Načrt (naslednji tedni)
 
-## Teden 7 — Score, valovi, HUD
- 
-- **Score:** igralec ima score, ob vsakem ubitem sovražniku se poveča za 50.
-- **Valovi:** sovražniki se ob vsakem valovu spawnajo na robu platna, vsak z svojo palico življenja. Ko jih igralec usteli, se jim ta palica zmanjša, ko jim zmanjka HP-ja so izbrisani. Ko ni več sovražnikov, se spawn-a naslednji val, tokrat z več sovražniki. Linear scaling.
-- **HUD:** zatemnjen kvadrat v ozadju. Na njem so igralčev HP (v številkah) overlay-an na palici življenja. Pod njem so število valov, število točk. na levi so state in opcijsko debug elementi.
+## Teden 7 — točke, valovi, HUD
 
-## Načrt (naslednji tedni)
-- Teden 8: seek (sovražnik sledi igralcu).
+- **Sovražnik ima HP**; krogla odvzame `BULLET_DAMAGE` (10). Ob `hp <= 0` sovražnik izgine in `world.score` zraste za njegove točke. Ob zadetku se nad njim pokaže `-10` (`popups.js`).
+- **Valovi:** `spawnWave(world, n)` postavi sovražnike na rob (ne v zid, ne blizu igralca). Ko je `world.enemies.length === 0`, se začne val `wave + 1`. Val n ima `WAVE_START_ENEMIES + WAVE_ENEMY_STEP * (n - 1)` sovražnikov (2, 3, 4, …).
+- **HUD:** palica HP s številom, val in točke na temni plošči; majhna palica nad sovražnikom z več HP; na GAME OVER so vidne končne točke. `resetGame` ponastavi `score`, `wave` in sovražnike.
+
+## Teden 8 — seek in dva tipa
+
+- **`KINDS` v `config.js`:** `walker` (hitrost 60, 20 HP, 50 točk) in `runner` (hitrost 150, 10 HP, 30 točk, manjši in vijoličen). Val 1 so sami walkerji; od vala 2 je približno tretjina runnerjev.
+- **Seek:** `updateEnemy` v `enemies.js` vzame enotski vektor od središča sovražnika do središča igralca in ga pomnoži s `speed * dt`. Isti za oba tipa; tip menja samo številke.
+- **Trki:** premik gre skozi `moveWithWalls`. Trdni so zidovi, igralec in drugi sovražniki, zato se ne prekrivajo.
+- **Palica HP** nad sovražnikom je samo pri tistih, ki zdržijo več kot en zadetek (walker).
+
+## Znane omejitve
+
+- **Brez pathfindinga:** sovražniki (seek) se premikajo naravnost proti igralcu. Če je med njima zid, se sovražnik ob njem ustavi (po oseh še drsi) in čaka, da se igralec premakne.
+- **Ni menija:** stanje `MENU` obstaja samo kot ime; igra se začne takoj.
+- **En sam tip orožja** in brez zvokov ter spritov (pravokotniki).
+
+## Naslednje
+
+Projektna faza: lastna igra (glej `projekt/BRIEF.md`).
